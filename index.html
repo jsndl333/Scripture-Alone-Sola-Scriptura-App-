@@ -1,0 +1,1602 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reformed Faith App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen font-sans">
+    <div id="root"></div>
+    <script type="text/babel">
+        const App = () => {
+            const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+            const [accordionState, setAccordionState] = React.useState({ solas: false });
+            const [currentPage, setCurrentPage] = React.useState('home');
+            const [lessonProgress, setLessonProgress] = React.useState({});
+            const [quizAnswers, setQuizAnswers] = React.useState({});
+            const [quizResults, setQuizResults] = React.useState({});
+
+            const toggleAccordion = (section) => {
+                setAccordionState(prev => ({ ...prev, [section]: !prev[section] }));
+            };
+
+            const navigate = (page) => {
+                setCurrentPage(page);
+                setIsMenuOpen(false); // Close the menu when a link is clicked
+                window.scrollTo(0, 0);
+            };
+
+            const markLessonComplete = (lesson) => {
+                setLessonProgress(prev => ({ ...prev, [lesson]: true }));
+            };
+
+            const handleQuizAnswer = (topic, question, answer) => {
+                setQuizAnswers(prev => ({
+                    ...prev,
+                    [topic]: { ...prev[topic], [question]: answer }
+                }));
+            };
+
+            const checkQuizAnswers = (topic, correctAnswers) => {
+                const answers = quizAnswers[topic] || {};
+                let score = 0;
+                Object.keys(correctAnswers).forEach(q => {
+                    if (answers[q] === correctAnswers[q]) score++;
+                });
+                setQuizResults(prev => ({ ...prev, [topic]: score }));
+            };
+
+            const Icon = ({ name, size = '100px' }) => {
+                const iconPaths = {
+                    'calvin': (
+                        <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <title>Book Icon</title>
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V6.5A2.5 2.5 0 0 0 17.5 4h-11A2.5 2.5 0 0 0 4 6.5v13z" />
+                        </svg>
+                    ),
+                    'luther': (
+                        <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+                            <polyline points="13 2 13 9 20 9" />
+                            <path d="M16 13L8 13" />
+                            <path d="M16 17L8 17" />
+                        </svg>
+                    ),
+                    'knox': (
+                        <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                            <line x1="12" y1="12" x2="12" y2="12" />
+                        </svg>
+                    ),
+                    'edwards': (
+                        <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                        </svg>
+                    ),
+                    'sproul': (
+                        <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3 3v18h18" />
+                            <path d="M18.7 8.7L12 15.4l-3.3-3.3L3 18" />
+                        </svg>
+                    ),
+                    'ryle': (
+                        <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                            <line x1="12" y1="20" x2="12" y2="4" />
+                            <line x1="4" y1="12" x2="20" y2="12" />
+                        </svg>
+                    ),
+                    'lloyd-jones': (
+                        <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <title>Book with Bookmark Icon</title>
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V6.5A2.5 2.5 0 0 0 17.5 4h-11A2.5 2.5 0 0 0 4 6.5v13z" />
+                            <polyline points="12 4 12 10 16 12" />
+                        </svg>
+                    ),
+                    'packer': (
+                        <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <title>Closed Book Icon</title>
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                        </svg>
+                    ),
+                    'spurgeon': (
+                        <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 2c-3.314 0-6 2.686-6 6v14h12V8c0-3.314-2.686-6-6-6zm0 0v16" />
+                            <path d="M22 6c0-1.104-.896-2-2-2h-3v16h6V8" />
+                            <path d="M2 6c0-1.104.896-2 2-2h3v16H2V8" />
+                        </svg>
+                    ),
+                    'whitefield': (
+                        <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                            <path d="M2 17l10 5 10-5" />
+                            <path d="M2 12l10 5 10-5" />
+                        </svg>
+                    ),
+                    // New icon for Saint Augustine and Thomas Aquinas (generic book)
+                    'book-general': (
+                        <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <title>Generic Book Icon</title>
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                        </svg>
+                    ),
+                    // Hamburger menu icon
+                    'hamburger': (
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    ),
+                    // Close menu icon
+                    'close': (
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    ),
+                    'back': (
+                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+                         </svg>
+                    ),
+                    'logo-icon': (
+                        <svg className="w-6 h-6 md:w-8 md:h-8 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.467 9.554 5 8.25 5c-4.418 0-8 2.062-8 4.673 0 2.502 3.654 4.145 8.25 4.145 1.304 0 2.582-.467 3.75-1.253M12 6.253C13.168 5.467 14.446 5 15.75 5c4.418 0 8 2.062 8 4.673 0 2.502-3.654 4.145-8.25 4.145-1.304 0-2.582-.467-3.75-1.253" />
+                        </svg>
+                    ),
+                };
+
+                // For the main figures page, the icon is a large block
+                if (['calvin', 'luther', 'knox', 'edwards', 'sproul', 'ryle', 'lloyd-jones', 'packer', 'spurgeon', 'whitefield', 'augustine', 'aquinas'].includes(name) && size === '100px') {
+                    return (
+                        <div className="flex-shrink-0 mb-4 md:mb-0 w-32 h-32 md:w-48 md:h-48 p-4 bg-indigo-100 text-indigo-700 rounded-xl shadow-md flex items-center justify-center">
+                            {iconPaths[name] || <span className="text-sm font-semibold">Icon not found</span>}
+                        </div>
+                    );
+                }
+
+                // For all other smaller icons
+                return iconPaths[name];
+            };
+            
+            const Header = () => (
+                <header className="fixed top-0 left-0 right-0 z-50 bg-indigo-800 text-white shadow-lg">
+                    <nav className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+                        <div className="flex items-center">
+                            <button onClick={() => navigate('home')} className="flex items-center text-xl md:text-2xl font-bold hover:text-indigo-200 transition-colors duration-200">
+                                <Icon name="logo-icon" />
+                                <span className="hidden md:inline">Reformed Faith App</span>
+                                <span className="inline md:hidden">Reformed App</span>
+                            </button>
+                        </div>
+                        <div className="hidden md:flex items-center space-x-6 text-sm font-semibold">
+                            <button onClick={() => navigate('topics')} className="hover:text-indigo-200 transition-colors duration-200">Theological Topics</button>
+                            <button onClick={() => navigate('figures')} className="hover:text-indigo-200 transition-colors duration-200">Key Figures</button>
+                        </div>
+                        <div className="md:hidden">
+                            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-white hover:bg-indigo-700 rounded-md transition-colors duration-200">
+                                {isMenuOpen ? <Icon name="close" /> : <Icon name="hamburger" />}
+                            </button>
+                        </div>
+                    </nav>
+                    {isMenuOpen && (
+                        <div className="absolute top-full left-0 right-0 bg-indigo-700 md:hidden transition-all duration-300 ease-in-out">
+                            <div className="flex flex-col p-4 text-sm font-semibold space-y-2">
+                                <button onClick={() => navigate('home')} className="p-2 text-left hover:bg-indigo-600 rounded-md">Home</button>
+                                <button onClick={() => navigate('topics')} className="p-2 text-left hover:bg-indigo-600 rounded-md">Theological Topics</button>
+                                <button onClick={() => navigate('figures')} className="p-2 text-left hover:bg-indigo-600 rounded-md">Key Figures</button>
+                            </div>
+                        </div>
+                    )}
+                </header>
+            );
+
+            const PageHeader = ({ title, onBackClick }) => (
+                <div className="flex items-center mb-6">
+                    {onBackClick && (
+                        <button
+                            onClick={onBackClick}
+                            className="flex items-center p-2 -ml-2 rounded-full text-indigo-800 hover:bg-indigo-100 transition-colors duration-200"
+                        >
+                            <Icon name="back" />
+                        </button>
+                    )}
+                    <h2 className={`text-2xl md:text-4xl font-extrabold text-indigo-800`}>{title}</h2>
+                </div>
+            );
+
+            const quizData = {
+                'sola-fide': {
+                    questions: [
+                        {
+                            question: "According to Reformed theology, how is a person justified before God?",
+                            options: [
+                                "By good works and faith",
+                                "By faith alone",
+                                "By works of the law alone",
+                                "By baptism"
+                            ]
+                        },
+                        {
+                            question: "Which of the 'Five Solas' is Latin for 'faith alone'?",
+                            options: [
+                                "Sola Gratia",
+                                "Sola Scriptura",
+                                "Sola Fide",
+                                "Solus Christus"
+                            ]
+                        }
+                    ],
+                    correctAnswers: {
+                        0: "By faith alone",
+                        1: "Sola Fide"
+                    },
+                    biblicalReferences: {
+                        0: "Romans 3:28, Ephesians 2:8-9",
+                        1: "Romans 3:28"
+                    }
+                },
+                'women-elders': {
+                    questions: [
+                        {
+                            question: "Which of the following is typically a complementarian view on women in church leadership?",
+                            options: [
+                                "Women can serve as elders",
+                                "Men and women have different roles, but are equal in dignity",
+                                "The Bible is silent on the issue of women in leadership",
+                                "Leadership roles are based on giftedness, regardless of gender"
+                            ]
+                        },
+                        {
+                            question: "Which New Testament passage is often cited to support a complementarian view on eldership?",
+                            options: [
+                                "Acts 2:17",
+                                "Galatians 3:28",
+                                "1 Timothy 2:12",
+                                "Romans 16:1-2"
+                            ]
+                        }
+                    ],
+                    correctAnswers: {
+                        0: "Men and women have different roles, but are equal in dignity",
+                        1: "1 Timothy 2:12"
+                    },
+                    biblicalReferences: {
+                        0: "Ephesians 5:22-33, 1 Timothy 2:11-14",
+                        1: "1 Timothy 2:12"
+                    }
+                },
+                'total-depravity': {
+                    questions: [
+                        {
+                            question: "What does the doctrine of 'Total Depravity' mean in Reformed theology?",
+                            options: [
+                                "Humans are as evil as they can possibly be",
+                                "Every part of a person is affected by sin, making them unable to save themselves",
+                                "Only some people are born sinful",
+                                "Sin only affects a person's emotions"
+                            ]
+                        },
+                        {
+                            question: "Which biblical passage is often used to support the idea that 'there is no one righteous, not even one'?",
+                            options: [
+                                "John 3:16",
+                                "Psalm 23:1",
+                                "Romans 3:10-18",
+                                "Acts 1:8"
+                            ]
+                        }
+                    ],
+                    correctAnswers: {
+                        0: "Every part of a person is affected by sin, making them unable to save themselves",
+                        1: "Romans 3:10-18"
+                    },
+                    biblicalReferences: {
+                        0: "Romans 3:10-18, Psalm 51:5",
+                        1: "Romans 3:10-18"
+                    }
+                },
+                'sola-scriptura': {
+                    questions: [
+                        {
+                            question: "What is the primary meaning of Sola Scriptura?",
+                            options: [
+                                "The Bible is the only book Christians should read",
+                                "The Bible is the sole infallible rule of faith and practice",
+                                "Scripture should be interpreted by the church fathers",
+                                "Only certain parts of the Bible are authoritative"
+                            ]
+                        },
+                        {
+                            question: "Which passage emphasizes that 'All Scripture is God-breathed' and useful for doctrine?",
+                            options: [
+                                "Matthew 28:19-20",
+                                "2 Timothy 3:16-17",
+                                "Hebrews 1:1-2",
+                                "John 1:1"
+                            ]
+                        }
+                    ],
+                    correctAnswers: {
+                        0: "The Bible is the sole infallible rule of faith and practice",
+                        1: "2 Timothy 3:16-17"
+                    },
+                    biblicalReferences: {
+                        0: "2 Timothy 3:16-17",
+                        1: "2 Timothy 3:16-17"
+                    }
+                },
+                'predestination': {
+                    questions: [
+                        {
+                            question: "In Reformed theology, what does 'predestination' refer to?",
+                            options: [
+                                "God’s foreknowledge of who will choose to be saved",
+                                "The idea that all people are saved",
+                                "God’s sovereign decree from eternity past to save some people",
+                                "Humanity's ability to choose their own salvation"
+                            ]
+                        },
+                        {
+                            question: "Which New Testament book is known for its extensive teaching on God’s sovereign choice and election?",
+                            options: [
+                                "The Gospel of John",
+                                "The Book of Acts",
+                                "Romans and Ephesians",
+                                "The Book of Revelation"
+                            ]
+                        }
+                    ],
+                    correctAnswers: {
+                        0: "God’s sovereign decree from eternity past to save some people",
+                        1: "Romans and Ephesians"
+                    },
+                    biblicalReferences: {
+                        0: "Ephesians 1:4-5",
+                        1: "Romans 8:29-30, Ephesians 1:4-5"
+                    }
+                },
+                'covenant-theology': {
+                    questions: [
+                        {
+                            question: "Covenant Theology typically divides God's dealings with humanity into how many major covenants?",
+                            options: [
+                                "One covenant: the Covenant of Grace",
+                                "Two covenants: the Covenant of Works and the Covenant of Grace",
+                                "Three covenants: the Covenant of Works, the Covenant of Grace, and the Covenant of Redemption",
+                                "Four covenants: the Noahic, Abrahamic, Mosaic, and Davidic"
+                            ]
+                        },
+                        {
+                            question: "What is the biblical foundation for the Covenant of Works?",
+                            options: [
+                                "Adam's relationship with God in the Garden of Eden",
+                                "The promise to Abraham in Genesis 12",
+                                "The Law given to Moses on Mount Sinai",
+                                "The promise of a new covenant in Jeremiah 31"
+                            ]
+                        }
+                    ],
+                    correctAnswers: {
+                        0: "Three covenants: the Covenant of Works, the Covenant of Grace, and the Covenant of Redemption",
+                        1: "Adam's relationship with God in the Garden of Eden"
+                    },
+                    biblicalReferences: {
+                        0: "Genesis 2:16-17, Jeremiah 31:31-34",
+                        1: "Genesis 2:16-17, Hosea 6:7"
+                    }
+                },
+                'lords-supper': {
+                    questions: [
+                        {
+                            question: "What is the Reformed view on Christ's presence in the Lord's Supper?",
+                            options: [
+                                "He is physically present in the elements (transubstantiation)",
+                                "He is spiritually present, received by faith",
+                                "He is physically present alongside the elements (consubstantiation)",
+                                "It is only a symbolic meal with no real presence"
+                            ]
+                        },
+                        {
+                            question: "According to Reformed theology, what is the primary purpose of the Lord's Supper?",
+                            options: [
+                                "To re-sacrifice Christ for the forgiveness of sins",
+                                "To earn God's favor through a religious ritual",
+                                "To spiritually nourish believers and seal the Covenant of Grace",
+                                "To provide a purely social gathering for the church"
+                            ]
+                        }
+                    ],
+                    correctAnswers: {
+                        0: "He is spiritually present, received by faith",
+                        1: "To spiritually nourish believers and seal the Covenant of Grace"
+                    },
+                    biblicalReferences: {
+                        0: "John 6:53-56",
+                        1: "1 Corinthians 11:23-26"
+                    }
+                },
+                'tongues': {
+                    questions: [
+                        {
+                            question: "The Reformed view on the gift of tongues is often described as what?",
+                            options: [
+                                "Continuationist",
+                                "Pentecostal",
+                                "Charismatic",
+                                "Cessationist"
+                            ]
+                        },
+                        {
+                            question: "Which biblical passage is often used to argue that the gift of tongues would cease?",
+                            options: [
+                                "Acts 2:4",
+                                "1 Corinthians 13:8-10",
+                                "Mark 16:17",
+                                "Romans 12:6"
+                            ]
+                        }
+                    ],
+                    correctAnswers: {
+                        0: "Cessationist",
+                        1: "1 Corinthians 13:8-10"
+                    },
+                    biblicalReferences: {
+                        0: "1 Corinthians 13:8-10, Hebrews 2:3-4",
+                        1: "1 Corinthians 13:8-10"
+                    }
+                },
+                'church-government': {
+                    questions: [
+                        {
+                            question: "What form of church government is led by a body of elders who also serve on regional and national assemblies?",
+                            options: [
+                                "Congregational",
+                                "Episcopal",
+                                "Presbyterian",
+                                "Independent"
+                            ]
+                        },
+                        {
+                            question: "Which form of church government places the final authority for major decisions in the local congregation?",
+                            options: [
+                                "Episcopal",
+                                "Presbyterian",
+                                "Congregational",
+                                "Synodical"
+                            ]
+                        }
+                    ],
+                    correctAnswers: {
+                        0: "Presbyterian",
+                        1: "Congregational"
+                    },
+                    biblicalReferences: {
+                        0: "Titus 1:5",
+                        1: "Acts 6:1-6, Acts 15:22"
+                    }
+                },
+                'healing': {
+                    questions: [
+                        {
+                            question: "How do many Reformed denominations view divine healing as a miraculous sign-gift?",
+                            options: [
+                                "It is a gift that is still active in the church today",
+                                "It is a guaranteed promise for all believers",
+                                "It was a sign-gift that ceased after the apostolic era",
+                                "It is only available to certain spiritual leaders"
+                            ]
+                        },
+                        {
+                            question: "Which passage is often cited to show that God does not always remove suffering, even for His faithful servants?",
+                            options: [
+                                "James 5:14-16",
+                                "Acts 3:6",
+                                "2 Corinthians 12:7-9",
+                                "Matthew 10:1"
+                            ]
+                        }
+                    ],
+                    correctAnswers: {
+                        0: "It was a sign-gift that ceased after the apostolic era",
+                        1: "2 Corinthians 12:7-9"
+                    },
+                    biblicalReferences: {
+                        0: "Hebrews 2:3-4",
+                        1: "2 Corinthians 12:7-9"
+                    }
+                }
+            };
+
+            const QuizSection = ({ topic, questions, correctAnswers, biblicalReferences }) => {
+                const score = quizResults[topic];
+                const answers = quizAnswers[topic] || {};
+                return (
+                    <div className="mt-8 p-6 bg-indigo-50 rounded-xl">
+                        <h3 className="text-xl font-bold text-indigo-800 mb-4">Test Your Knowledge</h3>
+                        {questions.map((q, index) => (
+                            <div key={index} className="mb-4">
+                                <p className="text-gray-700 font-semibold">{q.question}</p>
+                                {q.options.map((option, i) => (
+                                    <div key={i} className="mt-2">
+                                        <label className="flex items-center">
+                                            <input
+                                                type="radio"
+                                                name={`${topic}-q${index}`}
+                                                value={option}
+                                                checked={quizAnswers[topic]?.[index] === option}
+                                                onChange={() => handleQuizAnswer(topic, index, option)}
+                                                className="mr-2"
+                                            />
+                                            <span className="text-gray-700">{option}</span>
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        ))}
+                        <button
+                            onClick={() => checkQuizAnswers(topic, correctAnswers)}
+                            className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-200"
+                        >
+                            Submit Answers
+                        </button>
+                        {score !== undefined && (
+                            <>
+                                <p className="mt-4 text-gray-700 font-semibold">
+                                    Score: {score} out of {questions.length}
+                                </p>
+                                <div className="mt-4 p-4 bg-white rounded-lg">
+                                    <h4 className="text-lg font-semibold text-indigo-800 mb-2">Quiz Review</h4>
+                                    {questions.map((q, index) => (
+                                        <div key={index} className="mb-4">
+                                            <p className="text-gray-700 font-semibold">{q.question}</p>
+                                            <p className="text-gray-600">
+                                                <span className="font-semibold">Your Answer: </span>
+                                                {answers[index] || "Not answered"}
+                                                {answers[index] === correctAnswers[index] ? (
+                                                    <span className="ml-2 text-green-600">✔ Correct</span>
+                                                ) : (
+                                                    <span className="ml-2 text-red-600">✗ Incorrect</span>
+                                                )}
+                                            </p>
+                                            <p className="text-gray-600">
+                                                <span className="font-semibold">Correct Answer: </span>
+                                                {correctAnswers[index]}
+                                            </p>
+                                            <p className="text-gray-600">
+                                                <span className="font-semibold">Biblical Basis: </span>
+                                                {biblicalReferences[index] || "See relevant section above for biblical basis."}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+                        )}
+                    </div>
+                );
+            };
+
+            const Home = () => {
+                const [verse, setVerse] = React.useState(null);
+                const [loading, setLoading] = React.useState(true);
+                const [error, setError] = React.useState(null);
+                const [showVerse, setShowVerse] = React.useState(false);
+
+                React.useEffect(() => {
+                    const fetchVerse = async () => {
+                        try {
+                            const response = await fetch('https://bible-api.com/?random=verse');
+                            if (!response.ok) throw new Error('Failed to fetch verse');
+                            const data = await response.json();
+                            setVerse(data);
+                        } catch (err) {
+                            setError(err.message);
+                        } finally {
+                            setLoading(false);
+                        }
+                    };
+                    if (showVerse) fetchVerse();
+                }, [showVerse]);
+
+                return (
+                    <>
+                 <section className="text-center my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+    <h1 className="text-4xl md:text-5xl font-extrabold text-indigo-800">Reformed Faith App</h1>
+    <p className="mt-4 text-lg md:text-xl text-gray-600">Deepen your understanding of Reformed Christian theology.</p>
+    <p className="mt-4 text-base md:text-lg text-gray-700">
+        The Reformed App is a guide to our Christian heritage, created to center us on God's Word. It helps us avoid modern distractions and stay on the straight path God has for His people.<br /><br />
+        May God bless us all with a deeper understanding of our faith alone in Christ alone.<br />
+        Have a great day, brothers and sisters in Christ!<br /><br />
+        <a href="https://churchconcern.great-site.net/" target="_blank" rel="noopener noreferrer" className="text-indigo-700 underline font-semibold">
+            Visit my website
+        </a><br /><br />
+        <span className="font-semibold">— Jason</span>
+    </p>
+</section>
+
+                        <section id="verse" className="my-12">
+                            <button
+                                onClick={() => setShowVerse(!showVerse)}
+                                className="w-full py-4 bg-indigo-700 text-white rounded-xl shadow-lg hover:bg-indigo-800 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                            >
+                                {showVerse ? 'Hide Verse of the Day' : 'Show Verse of the Day'}
+                            </button>
+                            {showVerse && (
+                                <div className="mt-6 p-6 bg-white rounded-2xl shadow-xl text-center">
+                                    {loading && <p className="text-gray-600">Loading verse...</p>}
+                                    {error && <p className="text-red-500">Error: {error}</p>}
+                                    {verse && (
+                                        <div>
+                                            <p className="text-xl italic text-gray-800 mb-4 leading-relaxed">"{verse.text}"</p>
+                                            <p className="text-lg font-semibold text-indigo-800">{verse.reference}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </section>
+
+                        <section id="solas" className="my-12">
+                            <h2 className="text-2xl md:text-3xl font-bold text-indigo-800 mb-6 border-b-2 border-indigo-600 pb-2">The Five Solas</h2>
+                            <div className="bg-white rounded-2xl shadow-xl p-6">
+                                <p className="text-gray-700 mb-4">The Five Solas summarize the core beliefs of the Protestant Reformation, emphasizing the foundations of Reformed theology.</p>
+                                <button
+                                    onClick={() => toggleAccordion('solas')}
+                                    className="w-full text-left p-4 rounded-xl bg-indigo-100 hover:bg-indigo-200 transition-colors duration-200 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                                >
+                                    <span>Explore the Five Solas</span>
+                                    <svg className={`w-5 h-5 transform transition-transform duration-300 ${accordionState.solas ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                                <div className={`overflow-hidden transition-all duration-300 ease-in-out ${accordionState.solas ? 'max-h-[800px] opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
+                                    <div className="space-y-6">
+                                        <div>
+                                            <h4 className="text-lg font-semibold text-indigo-800">1. Sola Scriptura (Scripture Alone)</h4>
+                                            <p className="text-gray-700 mt-1">This principle states that the Bible is the sole infallible rule of faith and practice for the Christian church. While tradition is valuable, it must always be judged by the final authority of God's inspired Word.</p>
+                                            <p className="text-gray-600 mt-2 italic">Biblical Support: <strong className="font-semibold">2 Timothy 3:16-17</strong> ("All Scripture is God-breathed...")</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-lg font-semibold text-indigo-800">2. Sola Fide (Faith Alone)</h4>
+                                            <p className="text-gray-700 mt-1">This doctrine asserts that justification—God's act of declaring a sinner righteous—is received by faith alone, apart from any human works or merit. It is the instrumental means by which we receive the righteousness of Christ.</p>
+                                            <p className="text-gray-600 mt-2 italic">Biblical Support: <strong className="font-semibold">Ephesians 2:8-9</strong> ("For it is by grace you have been saved, through faith...")</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-lg font-semibold text-indigo-800">3. Sola Gratia (Grace Alone)</h4>
+                                            <p className="text-gray-700 mt-1">This is the conviction that salvation is a gift from God, initiated and completed by His unmerited favor. There is nothing a person can do to earn or contribute to their salvation; it is a work of God's sovereign grace from beginning to end.</p>
+                                            <p className="text-gray-600 mt-2 italic">Biblical Support: <strong className="font-semibold">Ephesians 2:8</strong> ("...not of yourselves, it is the gift of God...")</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-lg font-semibold text-indigo-800">4. Solus Christus (Christ Alone)</h4>
+                                            <p className="text-gray-700 mt-1">This principle teaches that Jesus Christ is the only mediator between God and humanity. Our salvation is accomplished solely through His atoning work on the cross and His perfect righteousness, and there is no other way to be saved.</p>
+                                            <p className="text-gray-600 mt-2 italic">Biblical Support: <strong className="font-semibold">1 Timothy 2:5</strong> ("For there is one God and one mediator between God and mankind, the man Christ Jesus...")</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-lg font-semibold text-indigo-800">5. Soli Deo Gloria (Glory to God Alone)</h4>
+                                            <p className="text-gray-700 mt-1">This final Sola declares that all of life, including salvation, should be lived for God's glory alone. It is the ultimate purpose of our existence and the natural consequence of understanding the other four Solas.</p>
+                                            <p className="text-gray-600 mt-2 italic">Biblical Support: <strong className="font-semibold">1 Corinthians 10:31</strong> ("...whatever you do, do it all for the glory of God.")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section id="topics" className="my-12">
+                            <h2 className="text-2xl md:text-3xl font-bold text-indigo-800 mb-6 border-b-2 border-indigo-600 pb-2">Theological Topics</h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {[
+                                    { id: 'sola-fide', title: 'Justification by Faith Alone', desc: 'The doctrine of salvation by grace through faith.' },
+                                    { id: 'total-depravity', title: 'Total Depravity', desc: 'Humanity’s sinful nature and need for grace.' },
+                                    { id: 'sola-scriptura', title: 'Sola Scriptura', desc: 'Scripture as the sole infallible authority.' },
+                                    { id: 'church-government', title: 'Church Government', desc: 'Forms of leadership in the Reformed tradition.' },
+                                    { id: 'women-elders', title: 'Women Elders', desc: 'Reformed views on women in church leadership.' },
+                                    { id: 'tongues', title: 'Speaking in Tongues', desc: 'Glossolalia from a Reformed perspective.' },
+                                    { id: 'healing', title: 'Divine Healing', desc: 'Supernatural healing in Reformed theology.' },
+                                    { id: 'covenant-theology', title: 'Covenant Theology', desc: 'Covenant theology vs. dispensationalism.' },
+                                    { id: 'predestination', title: 'Predestination', desc: 'God’s sovereign choice and human responsibility.' },
+                                    { id: 'lords-supper', title: 'The Lord’s Supper', desc: 'Views on the Lord’s Supper in Reformed theology.' },
+                                ].map(topic => (
+                                    <div
+                                        key={topic.id}
+                                        onClick={() => navigate(topic.id)}
+                                        className="bg-white rounded-2xl shadow-xl p-6 cursor-pointer hover:bg-indigo-50 transition-colors duration-200"
+                                    >
+                                        <h3 className="text-lg font-semibold text-indigo-800">{topic.title}</h3>
+                                        <p className="mt-2 text-gray-600">{topic.desc}</p>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); markLessonComplete(topic.id); }}
+                                            className={`mt-2 px-3 py-1 rounded-md text-sm ${lessonProgress[topic.id] ? 'bg-green-600 text-white' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}
+                                        >
+                                            {lessonProgress[topic.id] ? 'Completed' : 'Mark Complete'}
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        <section id="figures" className="my-12">
+                            <h2 className="text-2xl md:text-3xl font-bold text-indigo-800 mb-6 border-b-2 border-indigo-600 pb-2">Key Figures of the Reformation</h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {[
+                                    { id: 'augustine', title: 'Saint Augustine', desc: 'Early church father, influential theologian.' },
+                                    { id: 'aquinas', title: 'Thomas Aquinas', desc: 'Medieval philosopher and theologian.' },
+                                    { id: 'calvin', title: 'John Calvin', desc: 'French theologian and reformer in Geneva.' },
+                                    { id: 'luther', title: 'Martin Luther', desc: 'German reformer who sparked the Reformation.' },
+                                    { id: 'knox', title: 'John Knox', desc: 'Scottish leader of the Protestant Reformation.' },
+                                    { id: 'edwards', title: 'Jonathan Edwards', desc: 'American revivalist and theologian.' },
+                                    { id: 'sproul', title: 'R.C. Sproul', desc: 'Modern Reformed theologian and pastor.' },
+                                    { id: 'ryle', title: 'J.C. Ryle', desc: 'English evangelical bishop and writer.' },
+                                    { id: 'lloyd-jones', title: 'Martyn Lloyd-Jones', desc: 'Welsh minister and evangelical leader.' },
+                                    { id: 'packer', title: 'J.I. Packer', desc: 'Influential evangelical theologian.' },
+                                    { id: 'spurgeon', title: 'Charles Spurgeon', desc: 'English Baptist preacher.' },
+                                    { id: 'whitefield', title: 'George Whitefield', desc: 'Leader in the Great Awakening.' },
+                                ].map(figure => (
+                                    <div
+                                        key={figure.id}
+                                        onClick={() => navigate(figure.id)}
+                                        className="bg-white rounded-2xl shadow-xl p-6 cursor-pointer hover:bg-indigo-50 transition-colors duration-200"
+                                    >
+                                        <h3 className="text-lg font-semibold text-indigo-800">{figure.title}</h3>
+                                        <p className="mt-2 text-gray-600">{figure.desc}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    </>
+                );
+            };
+
+           // ...existing code...
+const CalvinPage = () => (
+    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+        <PageHeader title="John Calvin" onBackClick={() => navigate('figures')} />
+        <div className="flex flex-col md:flex-row md:space-x-8">
+            <Icon name="calvin" />
+            <div>
+                <p className="text-lg text-gray-700 mb-4 mt-4 md:mt-0">
+                    John Calvin (1509-1564) was a French theologian, pastor, and reformer in Geneva during the Protestant Reformation. He developed Calvinism, a theological system emphasizing God’s sovereignty, the authority of Scripture, and salvation by grace through faith. His work shaped Reformed theology, influencing churches worldwide.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Calvin was born in Noyon, France, and studied law and humanities before converting to Protestantism. Forced to flee Catholic France, he settled in Geneva, where he became the leading figure of the city’s Reformation. Calvin’s rigorous preaching, teaching, and church organization transformed Geneva into a center of Protestant thought and missionary activity.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    His magnum opus, the <i>Institutes of the Christian Religion</i>, is one of the most influential works in Christian theology, providing a systematic exposition of Reformed doctrine. Calvin emphasized the glory of God in all things, the total depravity of humanity, unconditional election, and the perseverance of the saints. He also contributed to the development of Presbyterian church government, education, and social welfare in Geneva.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Calvin’s legacy includes his commentaries on nearly every book of the Bible, his role in shaping Protestant liturgy, and his influence on later theologians such as John Knox, Jonathan Edwards, and Abraham Kuyper. His teachings continue to impact Reformed and Presbyterian churches globally.
+                </p>
+                <h3 className="text-xl font-bold text-indigo-800 mb-2">Key Contributions</h3>
+                <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                    <li><strong>Institutes of the Christian Religion:</strong> A comprehensive systematic theology, first published in 1536, outlining Reformed doctrine.</li>
+                    <li><strong>Reformation in Geneva:</strong> Established a theocratic government and church discipline, making Geneva a model for Protestant reform.</li>
+                    <li><strong>God’s Sovereignty:</strong> Taught that God’s providence governs all events, a cornerstone of Reformed thought.</li>
+                    <li><strong>Biblical Commentaries:</strong> Wrote influential commentaries on most books of the Bible, shaping Protestant exegesis.</li>
+                    <li><strong>Presbyterian Polity:</strong> Developed a model of church government led by elders, influencing Reformed and Presbyterian churches.</li>
+                    <li><strong>Missionary Vision:</strong> Sent pastors and missionaries from Geneva throughout Europe, spreading Reformed theology.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    );
+// ...existing code...
+
+            // ...existing code...
+const LutherPage = () => (
+    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+        <PageHeader title="Martin Luther" onBackClick={() => navigate('figures')} />
+        <div className="flex flex-col md:flex-row md:space-x-8">
+            <Icon name="luther" />
+            <div>
+                <p className="text-lg text-gray-700 mb-4 mt-4 md:mt-0">
+                    Martin Luther (1483-1546) was a German theologian, monk, and professor whose Ninety-five Theses in 1517 sparked the Protestant Reformation. He challenged Catholic practices, especially the sale of indulgences, and emphasized salvation by faith alone and Scripture’s supreme authority.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Luther was born in Eisleben, Germany, and became an Augustinian monk before teaching at the University of Wittenberg. His study of Scripture led him to question church traditions and papal authority. Luther’s bold stand at the Diet of Worms—“Here I stand, I can do no other”—marked a turning point in church history.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    He translated the Bible into German, making it accessible to ordinary people and shaping the German language. Luther’s writings, including his Small and Large Catechisms, helped educate believers in core Christian doctrines. His theology centered on justification by faith, the priesthood of all believers, and the rejection of works-based righteousness.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Luther’s reforms led to the formation of Lutheran churches and influenced other reformers like John Calvin and Ulrich Zwingli. His legacy includes a renewed focus on biblical preaching, congregational singing, and the centrality of Christ in worship and doctrine.
+                </p>
+                <h3 className="text-xl font-bold text-indigo-800 mb-2">Key Contributions</h3>
+                <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                    <li><strong>Ninety-five Theses:</strong> Criticized indulgences, igniting widespread reform.</li>
+                    <li><strong>Bible Translation:</strong> Translated the Bible into German, making it accessible to laypeople.</li>
+                    <li><strong>Sola Fide:</strong> Established justification by faith as a core Reformation principle.</li>
+                    <li><strong>Priesthood of All Believers:</strong> Taught that all Christians have direct access to God through Christ.</li>
+                    <li><strong>Lutheran Liturgy:</strong> Reformed worship practices, emphasizing preaching and congregational singing.</li>
+                    <li><strong>Catechisms:</strong> Authored instructional guides for Christian doctrine and daily living.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+);
+// ...existing code...
+
+            // ...existing code...
+const KnoxPage = () => (
+    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+        <PageHeader title="John Knox" onBackClick={() => navigate('figures')} />
+        <div className="flex flex-col md:flex-row md:space-x-8">
+            <Icon name="knox" />
+            <div>
+                <p className="text-lg text-gray-700 mb-4 mt-4 md:mt-0">
+                    John Knox (c. 1514-1572) was a Scottish minister, theologian, and reformer who played a pivotal role in the Scottish Reformation. He is best known as the founder of the Presbyterian Church of Scotland and for his passionate advocacy of Reformed theology and church government.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Knox was born in Haddington, Scotland, and educated at the University of St Andrews. Influenced by George Wishart and later by John Calvin during his exile in Geneva, Knox adopted Reformed doctrines and became a leading voice against Roman Catholicism in Scotland. His fiery preaching and uncompromising stance against Queen Mary I and Catholic rulers made him a controversial but influential figure.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Knox’s time in Geneva shaped his views on church polity, worship, and discipline. He returned to Scotland and led efforts to establish a national church based on Presbyterian principles, emphasizing the authority of elders and the importance of congregational participation. Knox also contributed to the development of the Book of Common Order, which provided a liturgical framework for Scottish worship.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    His legacy includes the spread of Presbyterianism throughout Scotland and beyond, the shaping of Scottish national identity, and the promotion of education and literacy through church schools. Knox’s influence extended to later Reformed movements and helped lay the groundwork for democratic principles in church and society.
+                </p>
+                <h3 className="text-xl font-bold text-indigo-800 mb-2">Key Contributions</h3>
+                <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                    <li><strong>Scottish Reformation:</strong> Led the establishment of Protestantism in Scotland and the rejection of papal authority.</li>
+                    <li><strong>Calvin’s Influence:</strong> Adapted Genevan theology and church government for Scottish churches.</li>
+                    <li><strong>Book of Common Order:</strong> Provided a liturgical and doctrinal framework for worship and church life.</li>
+                    <li><strong>Presbyterian Polity:</strong> Advocated for a church governed by elders, influencing global Presbyterianism.</li>
+                    <li><strong>Advocacy for Religious Freedom:</strong> Championed the right of congregations to choose their own leaders and worship according to Scripture.</li>
+                    <li><strong>Educational Reform:</strong> Promoted literacy and education through church-sponsored schools.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+);
+// ...existing code...
+
+            // ...existing code...
+const EdwardsPage = () => (
+    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+        <PageHeader title="Jonathan Edwards" onBackClick={() => navigate('figures')} />
+        <div className="flex flex-col md:flex-row md:space-x-8">
+            <Icon name="edwards" />
+            <div>
+                <p className="text-lg text-gray-700 mb-4 mt-4 md:mt-0">
+                    Jonathan Edwards (1703-1758) was an American theologian, philosopher, and revivalist preacher, widely regarded as one of the most important figures in American religious history. He played a central role in the First Great Awakening, a revival movement that transformed colonial Christianity.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Edwards was born in East Windsor, Connecticut, and educated at Yale. He became pastor of the Congregational Church in Northampton, Massachusetts, where his powerful sermons sparked widespread spiritual renewal. His most famous sermon, <i>Sinners in the Hands of an Angry God</i>, is a classic of American literature and a vivid call to repentance.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    As a philosopher and theologian, Edwards wrote extensively on topics such as the sovereignty of God, the nature of true religious experience, and the relationship between faith and reason. His works include <i>Religious Affections</i>, which explores the marks of genuine Christian conversion, and <i>The Freedom of the Will</i>, a major treatise on divine sovereignty and human responsibility.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Edwards served as president of the College of New Jersey (now Princeton University) near the end of his life. His legacy shaped American evangelicalism, Reformed theology, and the global missionary movement. He influenced later theologians such as Charles Hodge, B.B. Warfield, and John Piper.
+                </p>
+                <h3 className="text-xl font-bold text-indigo-800 mb-2">Key Contributions</h3>
+                <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                    <li><strong>First Great Awakening:</strong> Led revival with powerful preaching and theological leadership.</li>
+                    <li><strong>Sinners in the Hands of an Angry God:</strong> Delivered the iconic sermon calling for repentance and faith.</li>
+                    <li><strong>Religious Affections:</strong> Explored the nature of true conversion and spiritual experience.</li>
+                    <li><strong>The Freedom of the Will:</strong> Defended divine sovereignty and human responsibility.</li>
+                    <li><strong>Missionary Vision:</strong> Advocated for global missions and served as a missionary to Native Americans.</li>
+                    <li><strong>Philosophical Theology:</strong> Integrated rigorous philosophical analysis with Reformed doctrine.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+);
+// ...existing code...
+            // ...existing code...
+const SproulPage = () => (
+    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+        <PageHeader title="R.C. Sproul" onBackClick={() => navigate('figures')} />
+        <div className="flex flex-col md:flex-row md:space-x-8">
+            <Icon name="sproul" />
+            <div>
+                <p className="text-lg text-gray-700 mb-4 mt-4 md:mt-0">
+                    R.C. Sproul (1939-2017) was an American theologian, pastor, and author who played a major role in popularizing Reformed theology in the modern era. He founded Ligonier Ministries, which became a leading source of biblical teaching through conferences, radio, books, and video series.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Sproul was known for his clear, engaging teaching style and his ability to make complex theological concepts accessible to laypeople. He served as pastor at Saint Andrew’s Chapel in Florida and taught at several seminaries. His radio program, "Renewing Your Mind," reached millions worldwide.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    His most influential book, <i>The Holiness of God</i>, challenged readers to grasp the majesty and purity of God, shaping evangelical understanding of divine holiness. Sproul was a strong defender of biblical inerrancy, the authority of Scripture, and the historic doctrines of the Reformation. He contributed to the Chicago Statement on Biblical Inerrancy and helped found Reformation Bible College.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Sproul’s legacy includes hundreds of books, articles, and teaching series, as well as mentoring a new generation of pastors and theologians. He was known for his apologetics, defense of the doctrines of grace, and his commitment to making theology practical for everyday Christian living.
+                </p>
+                <h3 className="text-xl font-bold text-indigo-800 mb-2">Key Contributions</h3>
+                <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                    <li><strong>Ligonier Ministries:</strong> Promoted Reformed theology globally through media and conferences.</li>
+                    <li><strong>The Holiness of God:</strong> Authored an influential book and teaching series on God’s character.</li>
+                    <li><strong>Apologetics:</strong> Defended biblical authority, Reformed doctrine, and the inerrancy of Scripture.</li>
+                    <li><strong>Chicago Statement:</strong> Helped draft the foundational statement on biblical inerrancy.</li>
+                    <li><strong>Reformation Bible College:</strong> Founded an institution to train future leaders in Reformed theology.</li>
+                    <li><strong>Accessible Teaching:</strong> Made deep theological truths understandable for laypeople.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+);
+// ...existing code...
+           // ...existing code...
+const RylePage = () => (
+    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+        <PageHeader title="J.C. Ryle" onBackClick={() => navigate('figures')} />
+        <div className="flex flex-col md:flex-row md:space-x-8">
+            <Icon name="ryle" />
+            <div>
+                <p className="text-lg text-gray-700 mb-4 mt-4 md:mt-0">
+                    J.C. Ryle (1816-1900) was an English evangelical bishop, pastor, and prolific writer known for his clear, practical teaching and unwavering commitment to biblical truth. He served as the first Bishop of Liverpool and became a leading voice for evangelical Anglicanism in the Victorian era.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Ryle was educated at Eton and Oxford, and after a brief career in politics, he entered the ministry. He was deeply influenced by the Reformation and Puritan writers, and his preaching emphasized repentance, faith, and holiness. Ryle’s pastoral heart and concern for ordinary Christians led him to write accessible commentaries, tracts, and devotional books.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    His most famous work, <i>Holiness</i>, remains a classic on Christian living, urging believers to pursue godliness in everyday life. Ryle also defended the authority of Scripture and the central doctrines of the gospel against the rising tide of ritualism and theological liberalism in the Church of England. He was known for his plain language, practical advice, and strong advocacy for personal conversion and assurance of salvation.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Ryle’s legacy includes his influence on evangelical preaching, his defense of Protestant principles, and his encouragement to Christians to live out their faith with conviction and joy. His writings continue to inspire believers around the world.
+                </p>
+                <h3 className="text-xl font-bold text-indigo-800 mb-2">Key Contributions</h3>
+                <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                    <li><strong>Holiness:</strong> Authored enduring devotional works on sanctification and Christian living.</li>
+                    <li><strong>Evangelical Defense:</strong> Opposed ritualism and liberalism, upholding the authority of Scripture.</li>
+                    <li><strong>Bishop of Liverpool:</strong> Served as the first bishop, promoting evangelical ministry and church growth.</li>
+                    <li><strong>Accessible Teaching:</strong> Wrote practical commentaries and tracts for laypeople.</li>
+                    <li><strong>Pastoral Leadership:</strong> Modeled compassionate, gospel-centered care for his congregations.</li>
+                    <li><strong>Influence on Anglicanism:</strong> Helped shape evangelical identity within the Church of England.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+);
+// ...existing code...
+
+         // ...existing code...
+const MartynLloydJonesPage = () => (
+    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+        <PageHeader title="Martyn Lloyd-Jones" onBackClick={() => navigate('figures')} />
+        <div className="flex flex-col md:flex-row md:space-x-8">
+            <Icon name="lloyd-jones" />
+            <div>
+                <p className="text-lg text-gray-700 mb-4 mt-4 md:mt-0">
+                    Martyn Lloyd-Jones (1899-1981) was a Welsh minister, medical doctor, and one of the most influential evangelical preachers of the 20th century. He served as the minister of Westminster Chapel in London for nearly 30 years, where his expository preaching drew large crowds and shaped the direction of British evangelicalism.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Originally trained as a physician, Lloyd-Jones left medicine to pursue pastoral ministry, believing the spiritual needs of people were even greater than their physical ones. His preaching was marked by a deep commitment to biblical exposition, doctrinal clarity, and the power of the Holy Spirit. He delivered extensive sermon series on books like Romans and Ephesians, which are still widely read and listened to today.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Lloyd-Jones emphasized the sovereignty of God in salvation, the necessity of regeneration, and the centrality of Christ’s work. He was a strong advocate for Reformed theology, yet also encouraged spiritual vitality and revival. He opposed theological liberalism and ecumenism, urging Christians to stand firm on biblical truth.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    His legacy includes a vast library of recorded sermons, influential books such as <i>Preaching and Preachers</i>, and his role in the resurgence of expository preaching. Lloyd-Jones mentored many pastors and leaders, and his ministry continues to impact evangelical churches worldwide.
+                </p>
+                <h3 className="text-xl font-bold text-indigo-800 mb-2">Key Contributions</h3>
+                <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                    <li><strong>Expository Preaching:</strong> Delivered impactful, verse-by-verse sermons on Romans, Ephesians, and other books.</li>
+                    <li><strong>God’s Sovereignty:</strong> Emphasized divine authority in salvation and Christian life.</li>
+                    <li><strong>Preaching and Preachers:</strong> Authored a classic book on the theology and practice of preaching.</li>
+                    <li><strong>Revival and Spiritual Power:</strong> Advocated for genuine revival and the work of the Holy Spirit.</li>
+                    <li><strong>Opposition to Liberalism:</strong> Stood against theological compromise and ecumenism.</li>
+                    <li><strong>Mentorship:</strong> Influenced generations of pastors and evangelical leaders.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+);
+// ...existing code...
+
+            // ...existing code...
+const JIPackerPage = () => (
+    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+        <PageHeader title="J.I. Packer" onBackClick={() => navigate('figures')} />
+        <div className="flex flex-col md:flex-row md:space-x-8">
+            <Icon name="packer" />
+            <div>
+                <p className="text-lg text-gray-700 mb-4 mt-4 md:mt-0">
+                    J.I. Packer (1926-2020) was a Canadian theologian, author, and professor whose book <i>Knowing God</i> became a modern evangelical classic. He was a leading voice in the renewal of Reformed theology in the 20th century and helped bridge the gap between academic theology and practical Christian living.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Packer was born in England and educated at Oxford. He served as a professor at Regent College in Vancouver and contributed to many evangelical institutions. His writing and teaching emphasized the authority of Scripture, the centrality of the gospel, and the importance of personal holiness. Packer was instrumental in the production of the English Standard Version (ESV) Bible and the <i>Evangelical Anglican</i> movement.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    He was a strong defender of biblical inerrancy, contributing to the Chicago Statement on Biblical Inerrancy. Packer’s works, including <i>Evangelism and the Sovereignty of God</i> and <i>Concise Theology</i>, helped generations of Christians understand and apply Reformed doctrine. He was known for his clarity, humility, and pastoral concern.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Packer’s legacy includes his influence on evangelical theology, his role in shaping modern Bible translation, and his encouragement to pursue deep, joyful communion with God. His writings continue to inspire believers to know God more fully and live out their faith with conviction.
+                </p>
+                <h3 className="text-xl font-bold text-indigo-800 mb-2">Key Contributions</h3>
+                <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                    <li><strong>Knowing God:</strong> Authored a widely influential book on the character of God and Christian living.</li>
+                    <li><strong>Scriptural Authority:</strong> Defended biblical inerrancy and contributed to the Chicago Statement.</li>
+                    <li><strong>Evangelism and Sovereignty:</strong> Explained the relationship between God’s sovereignty and human responsibility in evangelism.</li>
+                    <li><strong>Concise Theology:</strong> Provided accessible summaries of key doctrines for laypeople.</li>
+                    <li><strong>ESV Bible:</strong> Played a major role in the development of the English Standard Version translation.</li>
+                    <li><strong>Evangelical Anglicanism:</strong> Helped shape the identity and theology of evangelical Anglicans worldwide.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+);
+// ...existing code...
+
+         // ...existing code...
+const SpurgeonPage = () => (
+    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+        <PageHeader title="Charles Spurgeon" onBackClick={() => navigate('figures')} />
+        <div className="flex flex-col md:flex-row md:space-x-8">
+            <Icon name="spurgeon" />
+            <div>
+                <p className="text-lg text-gray-700 mb-4 mt-4 md:mt-0">
+                    Charles Spurgeon (1834-1892) was an English Baptist preacher, author, and evangelist known as the “Prince of Preachers.” He served as pastor of the Metropolitan Tabernacle in London for nearly four decades, where his sermons drew thousands each week and reached millions through print. Spurgeon’s preaching combined deep biblical insight, passionate evangelism, and practical application.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Spurgeon was converted at age 15 and began preaching soon after. His ministry was marked by a strong commitment to the authority of Scripture, the doctrines of grace, and the centrality of Christ in all things. He founded orphanages, a pastors’ college, and numerous charitable works, demonstrating his concern for both spiritual and physical needs.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Spurgeon’s sermons were published weekly and remain among the most widely read Christian writings in history. His devotional classic, <i>Morning and Evening</i>, continues to inspire believers. He also wrote commentaries, books on prayer, and works defending Reformed theology. Despite suffering from illness and controversy, Spurgeon’s faith and perseverance made him a model of pastoral leadership.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    His legacy includes the global influence of his preaching, his defense of evangelical faith during the “Downgrade Controversy,” and his encouragement to Christians to live boldly for Christ. Spurgeon’s works are still used in churches, seminaries, and personal devotion around the world.
+                </p>
+                <h3 className="text-xl font-bold text-indigo-800 mb-2">Key Contributions</h3>
+                <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                    <li><strong>Prince of Preachers:</strong> Known for powerful, Christ-centered sermons and evangelistic zeal.</li>
+                    <li><strong>Metropolitan Tabernacle:</strong> Pastored one of the largest churches of his era, shaping evangelical worship and outreach.</li>
+                    <li><strong>Biblical Commentary:</strong> Produced extensive writings, including sermon collections and devotional works.</li>
+                    <li><strong>Pastors’ College:</strong> Trained hundreds of ministers for gospel ministry.</li>
+                    <li><strong>Charitable Work:</strong> Founded orphanages and led social ministries in London.</li>
+                    <li><strong>Downgrade Controversy:</strong> Defended biblical authority and evangelical doctrine against theological liberalism.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+);
+// ...existing code...
+
+           // ...existing code...
+const WhitefieldPage = () => (
+    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+        <PageHeader title="George Whitefield" onBackClick={() => navigate('figures')} />
+        <div className="flex flex-col md:flex-row md:space-x-8">
+            <Icon name="whitefield" />
+            <div>
+                <p className="text-lg text-gray-700 mb-4 mt-4 md:mt-0">
+                    George Whitefield (1714-1770) was an English Anglican cleric and evangelist who became one of the most prominent preachers of the 18th century. He was a key leader in the First Great Awakening, a revival movement that swept through Britain and the American colonies, and is remembered for his passionate, dramatic open-air preaching.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Whitefield was educated at Oxford, where he became friends with John and Charles Wesley. He was ordained in the Church of England but soon began preaching to large crowds outdoors, reaching people who rarely attended church. His powerful voice, emotional delivery, and clear gospel message drew tens of thousands, including many from marginalized communities.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Whitefield traveled extensively, preaching throughout England, Scotland, Wales, and especially the American colonies. He crossed the Atlantic seven times, uniting Christians across denominational lines and helping to lay the foundation for evangelicalism in America. His ministry emphasized the necessity of the new birth, justification by faith, and the sovereignty of God in salvation.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Whitefield’s legacy includes his role in shaping American religious identity, his influence on later revivalists, and his commitment to orphan care and social outreach. He worked alongside other leaders like Jonathan Edwards and John Wesley, though he differed with Wesley on predestination, holding firmly to Reformed views.
+                </p>
+                <h3 className="text-xl font-bold text-indigo-800 mb-2">Key Contributions</h3>
+                <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                    <li><strong>First Great Awakening:</strong> Sparked revival in Britain and America, leading thousands to faith.</li>
+                    <li><strong>Open-Air Preaching:</strong> Delivered impactful sermons to massive crowds, making the gospel accessible.</li>
+                    <li><strong>Transatlantic Ministry:</strong> United Christians across denominational and national boundaries.</li>
+                    <li><strong>Evangelical Unity:</strong> Fostered cooperation among Methodists, Presbyterians, Baptists, and others.</li>
+                    <li><strong>Social Outreach:</strong> Founded orphanages and advocated for the poor.</li>
+                    <li><strong>Doctrines of Grace:</strong> Defended Reformed theology, especially the sovereignty of God in salvation.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+);
+// ...existing
+
+const AugustinePage = () => (
+    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+        <PageHeader title="Saint Augustine of Hippo" onBackClick={() => navigate('figures')} />
+        <div className="flex flex-col md:flex-row md:space-x-8">
+            <Icon name="book-general" /> {/* Using a generic book icon */}
+            <div>
+                <p className="text-lg text-gray-700 mb-4 mt-4 md:mt-0">
+                    Saint Augustine of Hippo (354-430 AD) was a Roman African theologian and philosopher whose writings profoundly influenced the development of Western Christianity and Western philosophy. He is one of the most important Church Fathers in Western Christianity. His works include <i>Confessions</i> and <i>The City of God</i>.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Augustine was born in present-day Algeria and lived during the decline of the Roman Empire. After a youth marked by spiritual searching and philosophical inquiry, he converted to Christianity under the influence of his mother Monica and Bishop Ambrose of Milan. Augustine became Bishop of Hippo and wrote extensively on theology, philosophy, and biblical interpretation.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    His <i>Confessions</i> is a spiritual autobiography reflecting on his journey from sin to faith, while <i>The City of God</i> defends Christianity against pagan critics and lays out a vision of history shaped by God’s providence. Augustine’s doctrine of grace, original sin, and predestination shaped both Catholic and Protestant thought. He also contributed to the development of Trinitarian theology and the understanding of the sacraments.
+                </p>
+                <h3 className="text-xl font-bold text-indigo-800 mb-2">Key Contributions</h3>
+                <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                    <li><strong>Doctrine of Original Sin:</strong> Developed a comprehensive theology of human sinfulness, emphasizing the inherited guilt from Adam.</li>
+                    <li><strong>Just War Theory:</strong> Laid foundational principles for when war can be morally permissible.</li>
+                    <li><strong>Influence on Protestant Reformation:</strong> His emphasis on grace and predestination significantly influenced reformers like Martin Luther and John Calvin.</li>
+                    <li><strong>Trinity:</strong> Articulated the doctrine of the Trinity in his work <i>De Trinitate</i>, shaping orthodox Christian belief.</li>
+                    <li><strong>Christian Philosophy:</strong> Integrated classical philosophy with Christian doctrine, influencing medieval and modern thought.</li>
+                    <li><strong>Pastoral Leadership:</strong> Served as Bishop of Hippo for over 30 years, guiding the church through theological controversies and social upheaval.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+);
+
+           // ...existing code...
+const AquinasPage = () => (
+    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+        <PageHeader title="Thomas Aquinas" onBackClick={() => navigate('figures')} />
+        <div className="flex flex-col md:flex-row md:space-x-8">
+            <Icon name="book-general" /> {/* Using a generic book icon */}
+            <div>
+                <p className="text-lg text-gray-700 mb-4 mt-4 md:mt-0">
+                    Thomas Aquinas (1225-1274) was an Italian Dominican friar, philosopher, Catholic priest, and Doctor of the Church. He was a prominent scholastic theologian and the most influential Western medieval thinker. His most famous work is the <i>Summa Theologica</i>.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Aquinas was born in Roccasecca, Italy, and educated at Monte Cassino and the University of Naples. He joined the Dominican Order and studied under Albert the Great in Paris and Cologne. 
+                    Aquinas became a leading teacher and writer, shaping Catholic doctrine and Western philosophy. His intellectual rigor and clarity made him a central figure in the development of scholasticism.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    The <i>Summa Theologica</i> is a monumental synthesis of Christian theology and Aristotelian philosophy, addressing topics such as God’s existence, ethics, law, and salvation. 
+                    Aquinas’s “Five Ways” are philosophical arguments for God’s existence based on reason and observation. He also developed the concept of natural law, arguing that moral truths are accessible
+                     to human reason and rooted in the created order.
+                </p>
+                <p className="text-gray-700 mb-4">
+                    Aquinas’s influence extends beyond Catholicism; his work shaped medieval and modern thought, and his methods are studied in philosophy, theology, and ethics. 
+                    He was canonized as a saint and declared a Doctor of the Church for his lasting contributions. His writings continue to be foundational for Catholic theology and have impacted 
+                    Protestant and Reformed thinkers, especially in areas of apologetics and ethics.
+                </p>
+                <h3 className="text-xl font-bold text-indigo-800 mb-2">Key Contributions</h3>
+                <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                    <li><strong>Systematic Theology:</strong> Synthesized Christian theology with Aristotelian philosophy, creating a comprehensive system of thought.</li>
+                    <li><strong>Five Ways:</strong> Proposed five arguments for the existence of God, based on observation of the natural world.</li>
+                    <li><strong>Natural Law:</strong> Developed a theory of natural law, arguing that moral principles are inherent in human nature and discoverable through reason.</li>
+                    <li><strong>Doctrine of Analogy:</strong> Explained how human language can meaningfully describe God, despite the Creator-creature distinction.</li>
+                    <li><strong>Sacramental Theology:</strong> Articulated the nature and efficacy of the sacraments in Christian life.</li>
+                    <li><strong>Influence on Reformed Thought:</strong> While Aquinas was Catholic, his philosophical methods and natural law theory influenced later Protestant and Reformed theologians, especially in ethics and apologetics.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+);
+//
+
+            const SolaFidePage = () => {
+                const quizInfo = quizData['sola-fide'];
+                return (
+                    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+                        <PageHeader title="Justification by Faith Alone" onBackClick={() => navigate('topics')} />
+                        <p className="text-lg text-gray-700 mb-4">
+                            <strong>Sola Fide</strong> (Latin for "faith alone") is a core doctrine of the Protestant Reformation. It asserts that justification—God's act of declaring a sinner righteous—is received by faith alone, apart from any human works or merit.
+                        </p>
+                        <h3 className="text-xl font-bold text-indigo-800 mb-2">Biblical Basis</h3>
+                        <ul className="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li><strong>Romans 3:28:</strong> "For we hold that one is justified by faith apart from works of the law."</li>
+                            <li><strong>Ephesians 2:8-9:</strong> "For by grace you have been saved through faith. And this is not your own doing; it is the gift of God, not a result of works, so that no one may boast."</li>
+                        </ul>
+                        <div className="mt-8 p-6 bg-indigo-50 rounded-xl">
+                            <h3 className="text-xl font-bold text-indigo-800 mb-2">Citations</h3>
+                            <p className="text-gray-700 mb-4">
+                                Martin Luther's emphasis on Sola Fide was the catalyst for the Reformation, as he rediscovered the truth of Romans 1:17 that "the righteous shall live by faith." John Calvin, in his Institutes of the Christian Religion, further developed this doctrine, arguing that faith is the "instrumental cause" of our justification, as it apprehends the righteousness of Christ alone, not our own merit.
+                            </p>
+                        </div>
+                        <QuizSection
+                            topic="sola-fide"
+                            questions={quizInfo.questions}
+                            correctAnswers={quizInfo.correctAnswers}
+                            biblicalReferences={quizInfo.biblicalReferences}
+                        />
+                    </div>
+                );
+            };
+
+            const WomenEldersPage = () => {
+                const quizInfo = quizData['women-elders'];
+                return (
+                    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+                        <PageHeader title="Women Elders" onBackClick={() => navigate('topics')} />
+                        <p className="text-lg text-gray-700 mb-4">
+                            The Reformed tradition generally holds a complementarian view, asserting that men and women are equal in dignity but have distinct roles in the church. Based on passages like 1 Timothy 2:11-14 and Titus 1:5-9, eldership is typically reserved for men, seen as a divinely ordained structure for church leadership. This view emphasizes male headship in the church and family, while affirming women’s vital roles in other ministries, such as teaching women and children, serving in diaconal roles, and contributing to the church’s mission. Some Reformed churches, however, explore egalitarian perspectives, arguing that cultural contexts and giftedness may allow women to serve as elders, though this remains a minority view.
+                        </p>
+                        <h3 className="text-xl font-bold text-indigo-800 mb-2">Biblical Basis</h3>
+                        <ul className="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li><strong>1 Timothy 2:12:</strong> “I do not permit a woman to teach or to assume authority over a man.” This is often cited as a key text for restricting eldership to men.</li>
+                            <li><strong>Titus 1:5-9:</strong> Lists qualifications for elders, interpreted as male-specific in traditional readings.</li>
+                            <li><strong>Ephesians 5:22-33:</strong> Describes complementary roles in marriage, often extended to church leadership.</li>
+                        </ul>
+                        <div className="mt-8 p-6 bg-indigo-50 rounded-xl">
+                            <h3 className="text-xl font-bold text-indigo-800 mb-2">Citations</h3>
+                            <p className="text-gray-700 mb-4">
+                                J.I. Packer, in “Understanding Scripture,” defends complementarianism, stating, “The Bible’s teaching on gender roles is rooted in creation and covenant, not cultural whim.” R.C. Sproul, in “The Intimate Marriage,” argues that biblical headship reflects God’s design, not human prejudice, emphasizing 1 Timothy 2 as normative. The Westminster Confession of Faith (Chapter 1) underscores Scripture’s authority, guiding complementarian interpretations. Conversely, some modern Reformed scholars, like John Frame, suggest in “The Doctrine of the Christian Life” that giftedness and context may open leadership roles to women, though he remains cautious.
+                            </p>
+                        </div>
+                        <QuizSection
+                            topic="women-elders"
+                            questions={quizInfo.questions}
+                            correctAnswers={quizInfo.correctAnswers}
+                            biblicalReferences={quizInfo.biblicalReferences}
+                        />
+                    </div>
+                );
+            };
+
+            const TotalDepravityPage = () => {
+                const quizInfo = quizData['total-depravity'];
+                return (
+                    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+                        <PageHeader title="Total Depravity" onBackClick={() => navigate('topics')} />
+                        <p className="text-lg text-gray-700 mb-4">
+                            The doctrine of <strong>Total Depravity</strong> asserts that as a result of the Fall, every part of human nature—mind, will, and affections—is corrupted by sin. This does not mean humans are as evil as they could possibly be, but rather that sin has affected all aspects of their being, rendering them unable to save themselves or choose God on their own. This foundational belief highlights the need for God’s supernatural grace in salvation.
+                        </p>
+                        <h3 className="text-xl font-bold text-indigo-800 mb-2">Biblical Basis</h3>
+                        <ul className="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li><strong>Romans 3:10-18:</strong> This passage famously declares, “None is righteous, no, not one; no one understands; no one seeks for God.” It describes the comprehensive nature of sin's corruption.</li>
+                            <li><strong>Psalm 51:5:</strong> David's confession, "Behold, I was brought forth in iniquity, and in sin did my mother conceive me," supports the idea that human sinfulness is present from birth.</li>
+                        </ul>
+                        <div className="mt-8 p-6 bg-indigo-50 rounded-xl">
+                            <h3 className="text-xl font-bold text-indigo-800 mb-2">Citations</h3>
+                            <p className="text-gray-700 mb-4">
+                                John Calvin's <i>Institutes of the Christian Religion</i> extensively details the consequences of the Fall, arguing that sin has so pervasively corrupted human nature that we are "wholly incapable of any good." This idea was foundational for later Reformed theologians. Jonathan Edwards, in his work on <i>Original Sin</i>, further develops this concept, demonstrating from Scripture and reason that all humanity shares in Adam's guilt and is born with a corrupt nature, incapable of spiritual good without God's regenerating grace.
+                            </p>
+                        </div>
+                        <QuizSection
+                            topic="total-depravity"
+                            questions={quizInfo.questions}
+                            correctAnswers={quizInfo.correctAnswers}
+                            biblicalReferences={quizInfo.biblicalReferences}
+                        />
+                    </div>
+                );
+            };
+            
+            const SolaScripturaPage = () => {
+                const quizInfo = quizData['sola-scriptura'];
+                return (
+                    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+                        <PageHeader title="Sola Scriptura" onBackClick={() => navigate('topics')} />
+                        <p className="text-lg text-gray-700 mb-4">
+                            <strong>Sola Scriptura</strong> (Latin for "Scripture alone") is a formal principle of the Protestant Reformation. It states that the Bible is the sole infallible rule of faith and practice for the church and for individual believers. This doctrine holds that while tradition and church teaching are useful, they are always subject to the final authority of the inspired Word of God.
+                        </p>
+                        <h3 className="text-xl font-bold text-indigo-800 mb-2">Biblical Basis</h3>
+                        <ul className="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li><strong>2 Timothy 3:16-17:</strong> "All Scripture is breathed out by God and profitable for teaching, for reproof, for correction, and for training in righteousness, that the man of God may be competent, equipped for every good work." This passage is a cornerstone for the authority and sufficiency of Scripture.</li>
+                            <li><strong>Matthew 15:3-9:</strong> Jesus rebukes the Pharisees for using their traditions to nullify the commandments of God, reinforcing the priority of God’s written word.</li>
+                        </ul>
+                        <div className="mt-8 p-6 bg-indigo-50 rounded-xl">
+                            <h3 className="text-xl font-bold text-indigo-800 mb-2">Citations</h3>
+                            <p className="text-gray-700 mb-4">
+                                The Westminster Confession of Faith (Chapter 1) begins by declaring that the authority of the Holy Scripture is the foundation of faith, emphasizing its perspicuity and sufficiency for salvation. R.C. Sproul, in his book <i>Scripture Alone</i>, argues forcefully for the infallibility and inerrancy of the Bible, asserting that to deny its complete truthfulness is to deny God himself, who is the ultimate author of Scripture.
+                            </p>
+                        </div>
+                        <QuizSection
+                            topic="sola-scriptura"
+                            questions={quizInfo.questions}
+                            correctAnswers={quizInfo.correctAnswers}
+                            biblicalReferences={quizInfo.biblicalReferences}
+                        />
+                    </div>
+                );
+            };
+
+            const PredestinationPage = () => {
+                const quizInfo = quizData['predestination'];
+                return (
+                    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+                        <PageHeader title="Predestination" onBackClick={() => navigate('topics')} />
+                        <p className="text-lg text-gray-700 mb-4">
+                            The doctrine of <strong>Predestination</strong> is central to Reformed theology. It is the belief that God, in His sovereign will, has eternally decreed all things that will come to pass. In the context of salvation, this means God has, from eternity past, chosen who will be saved by His grace. This is not based on human merit or foreseen faith, but on God's good pleasure alone. This doctrine is a manifestation of God's absolute sovereignty and grace.
+                        </p>
+                        <h3 className="text-xl font-bold text-indigo-800 mb-2">Biblical Basis</h3>
+                        <ul className="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li><strong>Ephesians 1:4-5:</strong> "He chose us in him before the foundation of the world, that we should be holy and blameless before him. In love he predestined us for adoption to himself as sons through Jesus Christ, according to the purpose of his will."</li>
+                            <li><strong>Romans 8:29-30:</strong> This passage describes the "golden chain of salvation," linking God's foreknowledge to predestination, calling, justification, and glorification.</li>
+                        </ul>
+                        <div className="mt-8 p-6 bg-indigo-50 rounded-xl">
+                            <h3 className="text-xl font-bold text-indigo-800 mb-2">Citations</h3>
+                            <p className="text-gray-700 mb-4">
+                                John Calvin's <i>Institutes of the Christian Religion</i> dedicates significant space to predestination, which he describes as "God's eternal decree, by which he determined with himself what he willed to become of each man." Jonathan Edwards also defended this doctrine in his writings on God's absolute sovereignty and election, arguing that it is a biblically faithful and glorious truth that magnifies God's grace.
+                            </p>
+                        </div>
+                        <QuizSection
+                            topic="predestination"
+                            questions={quizInfo.questions}
+                            correctAnswers={quizInfo.correctAnswers}
+                            biblicalReferences={quizInfo.biblicalReferences}
+                        />
+                    </div>
+                );
+            };
+
+            const ChurchGovernmentPage = () => {
+                const quizInfo = quizData['church-government'];
+                return (
+                    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+                        <PageHeader title="Church Government" onBackClick={() => navigate('topics')} />
+                        <p className="text-lg text-gray-700 mb-4">
+                            Reformed churches typically follow one of two forms of church government: <strong>Presbyterian</strong> or <strong>Congregational</strong>.
+                            <br/><br/>
+                            <strong>Presbyterian government</strong> is led by a body of elders, both teaching and ruling, who are elected by the congregation. The elders govern the local church and also serve on regional and national assemblies (presbyteries and synods) to ensure unity and accountability. This model emphasizes the authority of the eldership as a group.
+                            <br/><br/>
+                            <strong>Congregational government</strong> places final authority in the local congregation. Members vote on major decisions, including electing leaders, approving budgets, and affirming new members. The elders or pastors lead the congregation but are ultimately accountable to the members.
+                        </p>
+                        <h3 className="text-xl font-bold text-indigo-800 mb-2">Biblical Basis</h3>
+                        <ul className="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li><strong>1 Timothy 3:</strong> This chapter outlines the qualifications for elders and deacons, defining the character and roles of church leaders.</li>
+                            <li><strong>Titus 1:5:</strong> Paul instructs Titus to "appoint elders in every town," indicating a structure of local church leadership.</li>
+                        </ul>
+                        <div className="mt-8 p-6 bg-indigo-50 rounded-xl">
+                            <h3 className="text-xl font-bold text-indigo-800 mb-2">Citations</h3>
+                            <p className="text-gray-700 mb-4">
+                                John Calvin's reforms in Geneva laid the groundwork for Presbyterian church government, establishing a system of pastors and elders working together to govern the church. John Knox, a follower of Calvin, brought this system to Scotland, establishing the Presbyterian Church of Scotland. This structure is detailed in the <i>Westminster Form of Presbyterial Church-Government</i> and the <i>Book of Church Order</i>, which both outline the biblical basis for rule by elders.
+                            </p>
+                        </div>
+                        <QuizSection
+                            topic="church-government"
+                            questions={quizInfo.questions}
+                            correctAnswers={quizInfo.correctAnswers}
+                            biblicalReferences={quizInfo.biblicalReferences}
+                        />
+                    </div>
+                );
+            };
+
+            const CovenantTheologyPage = () => {
+                const quizInfo = quizData['covenant-theology'];
+                return (
+                    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+                        <PageHeader title="Covenant Theology" onBackClick={() => navigate('topics')} />
+                        <p className="text-lg text-gray-700 mb-4">
+                            <strong>Covenant Theology</strong> is a framework for interpreting Scripture that sees God's relationship with humanity as being structured by a series of covenants. It is a central element of Reformed theology, contrasting with dispensationalism. The three major covenants are:
+                            <br/><br/>
+                            1. <strong>Covenant of Redemption:</strong> An eternal agreement between the Father, Son, and Holy Spirit to redeem a people for God's glory.
+                            2. <strong>Covenant of Works:</strong> Made with Adam in the Garden of Eden, promising life for perfect obedience and death for disobedience. Adam’s failure meant this covenant was broken.
+                            3. <strong>Covenant of Grace:</strong> Made after the Fall, promising salvation through Christ’s perfect life and atoning death. This covenant is administered in various forms throughout biblical history but is ultimately fulfilled in Jesus Christ.
+                        </p>
+                        <h3 className="text-xl font-bold text-indigo-800 mb-2">Biblical Basis</h3>
+                        <ul className="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li><strong>Luke 22:20:</strong> The Last Supper, where Jesus establishes the new covenant in his blood.</li>
+                            <li><strong>Galatians 3:17-18:</strong> Paul contrasts the promises of the Abrahamic covenant with the Mosaic law, showing the supremacy of grace over works.</li>
+                        </ul>
+                        <div className="mt-8 p-6 bg-indigo-50 rounded-xl">
+                            <h3 className="text-xl font-bold text-indigo-800 mb-2">Citations</h3>
+                            <p className="text-gray-700 mb-4">
+                                J.I. Packer, in his work on biblical interpretation, often highlights how the Old Testament points forward to the fulfillment of God's promises in Christ, a central theme of covenant theology. The <i>Westminster Confession of Faith</i> outlines these covenants, describing the Covenant of Works and the Covenant of Grace as the overarching framework for understanding God's plan of salvation throughout history.
+                            </p>
+                        </div>
+                        <QuizSection
+                            topic="covenant-theology"
+                            questions={quizInfo.questions}
+                            correctAnswers={quizInfo.correctAnswers}
+                            biblicalReferences={quizInfo.biblicalReferences}
+                        />
+                    </div>
+                );
+            };
+
+            const LordsSupperPage = () => {
+                const quizInfo = quizData['lords-supper'];
+                return (
+                    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+                        <PageHeader title="The Lord’s Supper" onBackClick={() => navigate('topics')} />
+                        <p className="text-lg text-gray-700 mb-4">
+                            Reformed theology holds a distinct view on the Lord's Supper, also known as Communion or the Eucharist. While rejecting the Roman Catholic doctrine of transubstantiation and Lutheran consubstantiation, the Reformed position affirms a <strong>spiritual presence</strong> of Christ.
+                            <br/><br/>
+                            John Calvin taught that Christ is not physically present in the elements of bread and wine, but that believers, through faith, are spiritually nourished by the body and blood of Christ. The Lord's Supper is a tangible sign and seal of the Covenant of Grace, strengthening the faith of believers and reminding them of Christ's sacrifice.
+                        </p>
+                        <h3 className="text-xl font-bold text-indigo-800 mb-2">Biblical Basis</h3>
+                        <ul className="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li><strong>1 Corinthians 11:23-26:</strong> The Apostle Paul's instruction on the proper observance of the Lord's Supper.</li>
+                            <li><strong>John 6:53-56:</strong> Jesus speaks of eating his flesh and drinking his blood, which Reformed theology interprets in a spiritual sense, as receiving him by faith.</li>
+                        </ul>
+                        <div className="mt-8 p-6 bg-indigo-50 rounded-xl">
+                            <h3 className="text-xl font-bold text-indigo-800 mb-2">Citations</h3>
+                            <p className="text-gray-700 mb-4">
+                                John Calvin, in his <i>Institutes</i>, details his view of the spiritual presence, emphasizing that the Holy Spirit unites believers to Christ in heaven during the Supper, so that we truly partake of His benefits. The Heidelberg Catechism further supports this, stating in Question 76 that “to eat the crucified body and drink the shed blood of Christ is not only to embrace with a believing heart all the sufferings and death of Christ...but also...to become more and more united to His blessed body.”
+                            </p>
+                        </div>
+                        <QuizSection
+                            topic="lords-supper"
+                            questions={quizInfo.questions}
+                            correctAnswers={quizInfo.correctAnswers}
+                            biblicalReferences={quizInfo.biblicalReferences}
+                        />
+                    </div>
+                );
+            };
+
+            const TonguesPage = () => {
+                const quizInfo = quizData['tongues'];
+                return (
+                    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+                        <PageHeader title="Speaking in Tongues" onBackClick={() => navigate('topics')} />
+                        <p className="text-lg text-gray-700 mb-4">
+                            In many Reformed traditions, the gifts of the Holy Spirit like speaking in tongues and miraculous healing are considered <strong>cessationist</strong>. This view holds that these specific sign-gifts, which served to authenticate the apostles and the early church, ceased with the completion of the New Testament canon and the death of the apostles.
+                        </p>
+                        <h3 className="text-xl font-bold text-indigo-800 mb-2">Biblical Basis</h3>
+                        <ul className="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li><strong>1 Corinthians 13:8-10:</strong> This passage is often cited by cessationists, as it speaks of tongues and prophecy ceasing when "the perfect comes" (interpreted by many as the completed Scriptures).</li>
+                            <li><strong>Hebrews 2:3-4:</strong> This passage describes the signs and wonders that accompanied the apostles' message, suggesting they were unique to that foundational period of the church.</li>
+                        </ul>
+                        <div className="mt-8 p-6 bg-indigo-50 rounded-xl">
+                            <h3 className="text-xl font-bold text-indigo-800 mb-2">Citations</h3>
+                            <p className="text-gray-700 mb-4">
+                                Martyn Lloyd-Jones, while believing in the power of the Holy Spirit, held a nuanced cessationist position in his commentary on Ephesians, suggesting that the primary, revelatory sign-gifts were unique to the apostolic era. R.C. Sproul is also a prominent cessationist, arguing from 1 Corinthians 13:8 that the "perfect" refers to the completed canon of Scripture, after which the gifts of tongues and prophecy are no longer necessary.
+                            </p>
+                        </div>
+                        <QuizSection
+                            topic="tongues"
+                            questions={quizInfo.questions}
+                            correctAnswers={quizInfo.correctAnswers}
+                            biblicalReferences={quizInfo.biblicalReferences}
+                        />
+                    </div>
+                );
+            };
+
+            const HealingPage = () => {
+                const quizInfo = quizData['healing'];
+                return (
+                    <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+                        <PageHeader title="Divine Healing" onBackClick={() => navigate('topics')} />
+                        <p className="text-lg text-gray-700 mb-4">
+                            Similar to the gift of tongues, many Reformed denominations hold a cessationist view on divine healing as a miraculous sign-gift performed by an individual. While they believe God can and does heal today in response to prayer, they typically do not believe in individuals having the gift of healing.
+                        </p>
+                        <h3 className="text-xl font-bold text-indigo-800 mb-2">Biblical Basis</h3>
+                        <ul className="list-disc pl-5 space-y-2 text-gray-700 mb-4">
+                            <li><strong>James 5:14-16:</strong> This passage calls for the sick to be prayed for, which Reformed churches practice, but it is not typically interpreted as a promise of guaranteed miraculous healing in every instance.</li>
+                            <li><strong>2 Corinthians 12:7-9:</strong> Paul's "thorn in the flesh" demonstrates that God does not always remove suffering, even for His most faithful servants, for a greater purpose.</li>
+                        </ul>
+                        <div className="mt-8 p-6 bg-indigo-50 rounded-xl">
+                            <h3 className="text-xl font-bold text-indigo-800 mb-2">Citations</h3>
+                            <p className="text-gray-700 mb-4">
+                                The Westminster Confession of Faith (Chapter 14) and the Heidelberg Catechism (Question 1) both emphasize that God's providence governs all things, including health and sickness, for His glory and our good. J.I. Packer, in <i>Knowing God</i>, underscores that while God can and does heal, His ultimate purpose is our sanctification and conformity to Christ's image, not necessarily the removal of all suffering, as demonstrated by Paul's example in 2 Corinthians 12.
+                            </p>
+                        </div>
+                        <QuizSection
+                            topic="healing"
+                            questions={quizInfo.questions}
+                            correctAnswers={quizInfo.correctAnswers}
+                            biblicalReferences={quizInfo.biblicalReferences}
+                        />
+                    </div>
+                );
+            };
+            
+            const TheologicalTopics = () => (
+                <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+                    <PageHeader title="Theological Topics" onBackClick={() => navigate('home')} />
+                    <p className="text-lg text-gray-700 mb-6">Explore various theological doctrines central to the Reformed tradition.</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[
+                            { id: 'sola-fide', title: 'Justification by Faith Alone', desc: 'The doctrine of salvation by grace through faith.' },
+                            { id: 'total-depravity', title: 'Total Depravity', desc: 'Humanity’s sinful nature and need for grace.' },
+                            { id: 'sola-scriptura', title: 'Sola Scriptura', desc: 'Scripture as the sole infallible authority.' },
+                            { id: 'church-government', title: 'Church Government', desc: 'Forms of leadership in the Reformed tradition.' },
+                            { id: 'women-elders', title: 'Women Elders', desc: 'Reformed views on women in church leadership.' },
+                            { id: 'tongues', title: 'Speaking in Tongues', desc: 'Glossolalia from a Reformed perspective.' },
+                            { id: 'healing', title: 'Divine Healing', desc: 'Supernatural healing in Reformed theology.' },
+                            { id: 'covenant-theology', title: 'Covenant Theology', desc: 'Covenant theology vs. dispensationalism.' },
+                            { id: 'predestination', title: 'Predestination', desc: 'God’s sovereign choice and human responsibility.' },
+                            { id: 'lords-supper', title: 'The Lord’s Supper', desc: 'Views on the Lord’s Supper in Reformed theology.' },
+                        ].map(topic => (
+                            <div
+                                key={topic.id}
+                                onClick={() => navigate(topic.id)}
+                                className="bg-indigo-50 rounded-2xl shadow-md p-6 cursor-pointer hover:bg-indigo-100 transition-colors duration-200"
+                            >
+                                <h3 className="text-lg font-semibold text-indigo-800">{topic.title}</h3>
+                                <p className="mt-2 text-gray-600">{topic.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+
+            const KeyFigures = () => (
+                <div className="my-12 p-6 md:p-8 bg-white rounded-2xl shadow-xl">
+                    <PageHeader title="Key Figures of the Reformation" onBackClick={() => navigate('home')} />
+                    <p className="text-lg text-gray-700 mb-6">Learn about the influential theologians and leaders who shaped Reformed theology.</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[
+                            { id: 'augustine', title: 'Saint Augustine', desc: 'Early church father, influential theologian.' },
+                            { id: 'aquinas', title: 'Thomas Aquinas', desc: 'Medieval philosopher and theologian.' },
+                            { id: 'calvin', title: 'John Calvin', desc: 'French theologian and reformer in Geneva.' },
+                            { id: 'luther', title: 'Martin Luther', desc: 'German reformer who sparked the Reformation.' },
+                            { id: 'knox', title: 'John Knox', desc: 'Scottish leader of the Protestant Reformation.' },
+                            { id: 'edwards', title: 'Jonathan Edwards', desc: 'American revivalist and theologian.' },
+                            { id: 'sproul', title: 'R.C. Sproul', desc: 'Modern Reformed theologian and pastor.' },
+                            { id: 'ryle', title: 'J.C. Ryle', desc: 'English evangelical bishop and writer.' },
+                            { id: 'lloyd-jones', title: 'Martyn Lloyd-Jones', desc: 'Welsh minister and evangelical leader.' },
+                            { id: 'packer', title: 'J.I. Packer', desc: 'Influential evangelical theologian.' },
+                            { id: 'spurgeon', title: 'Charles Spurgeon', desc: 'English Baptist preacher.' },
+                            { id: 'whitefield', title: 'George Whitefield', desc: 'Leader in the Great Awakening.' },
+                        ].map(figure => (
+                            <div
+                                key={figure.id}
+                                onClick={() => navigate(figure.id)}
+                                className="bg-indigo-50 rounded-2xl shadow-md p-6 cursor-pointer hover:bg-indigo-100 transition-colors duration-200"
+                            >
+                                <h3 className="text-lg font-semibold text-indigo-800">{figure.title}</h3>
+                                <p className="mt-2 text-gray-600">{figure.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+
+
+            const renderPage = () => {
+                switch(currentPage) {
+                    case 'home':
+                        return <Home />;
+                    case 'topics':
+                        return <TheologicalTopics />;
+                    case 'figures':
+                        return <KeyFigures />;
+                    case 'sola-fide':
+                        return <SolaFidePage />;
+                    case 'total-depravity':
+                        return <TotalDepravityPage />;
+                    case 'sola-scriptura':
+                        return <SolaScripturaPage />;
+                    case 'church-government':
+                        return <ChurchGovernmentPage />;
+                    case 'women-elders':
+                        return <WomenEldersPage />;
+                    case 'tongues':
+                        return <TonguesPage />;
+                    case 'healing':
+                        return <HealingPage />;
+                    case 'covenant-theology':
+                        return <CovenantTheologyPage />;
+                    case 'predestination':
+                        return <PredestinationPage />;
+                    case 'lords-supper':
+                        return <LordsSupperPage />;
+                    case 'calvin':
+                        return <CalvinPage />;
+                    case 'luther':
+                        return <LutherPage />;
+                    case 'knox':
+                        return <KnoxPage />;
+                    case 'edwards':
+                        return <EdwardsPage />;
+                    case 'sproul':
+                        return <SproulPage />;
+                    case 'ryle':
+                        return <RylePage />;
+                    case 'lloyd-jones':
+                        return <MartynLloydJonesPage />;
+                    case 'packer':
+                        return <JIPackerPage />;
+                    case 'spurgeon':
+                        return <SpurgeonPage />;
+                    case 'whitefield':
+                        return <WhitefieldPage />;
+                    case 'augustine':
+                        return <AugustinePage />;
+                    case 'aquinas':
+                        return <AquinasPage />;
+                    default:
+                        return <Home />;
+                }
+            };
+
+            return (
+                <div className="relative">
+                    <Header />
+                    <div className="max-w-4xl mx-auto p-4 md:p-8 pt-24">
+                        {renderPage()}
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
+
+
+
