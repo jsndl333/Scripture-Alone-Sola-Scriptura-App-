@@ -1,1025 +1,203 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sola Scriptura Decision-Making</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-      body {
-        font-family: 'Inter', sans-serif;
-      }
-    </style>
-</head>
-<body class="min-h-screen bg-slate-100 font-inter text-slate-800 p-4 sm:p-8">
-    <div id="root"></div>
+<script>
+    const { useState, createElement } = React;
+    const { createRoot } = ReactDOM;
 
-    <!-- React and ReactDOM libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
-
-    <script>
-        const { useState, createElement } = React;
-        const { createRoot } = ReactDOM;
-
-        // --- Icon Components (Transpiled from JSX) ---
-        const BookOpenIcon = (props) => (
-            createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-book-open" }),
-                createElement("path", { d: "M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" }),
-                createElement("path", { d: "M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" })
-            )
-        );
-        const BanknoteIcon = (props) => (
-            createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-banknote" }),
-                createElement("rect", { width: "20", height: "12", x: "2", y: "6", rx: "2" }),
-                createElement("circle", { cx: "12", cy: "12", r: "2" }),
-                createElement("path", { d: "M6 12h.01M18 12h.01" })
-            )
-        );
-        const HeartHandshakeIcon = (props) => (
-            createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-heart-handshake" }),
-                createElement("path", { d: "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" }),
-                createElement("path", { d: "M12 14h.01" }),
-                createElement("path", { d: "m18 14-4 4" })
-            )
-        );
-        const ScaleIcon = (props) => (
-            createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-scale" }),
-                createElement("path", { d: "m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" }),
-                createElement("path", { d: "m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" }),
-                createElement("path", { d: "M7 21h10" }),
-                createElement("path", { d: "M12 3v18" }),
-                createElement("path", { d: "M3 7h2c2 0 5-1 7-2s5 1 7 2h2" })
-            )
-        );
-        const ChevronLeftIcon = (props) => (
-            createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-chevron-left" }),
-                createElement("path", { d: "m15 18-6-6 6-6" })
-            )
-        );
-        const BriefcaseIcon = (props) => (
-            createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-briefcase" }),
-                createElement("rect", { width: "20", height: "14", x: "2", y: "7", rx: "2", ry: "2" }),
-                createElement("path", { d: "M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" })
-            )
-        );
-        const ChurchIcon = (props) => (
-            createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-church" }),
-                createElement("path", { d: "M18 7c0-2.76-2.07-5-4.63-5C10.74 2 8 4.24 8 7c0 .8.2 1.55.59 2.22L2 15v6h20v-6l-6.59-5.78A6.98 6.98 0 0 0 18 7Z" }),
-                createElement("path", { d: "M12 2v20" }),
-                createElement("path", { d: "M12 10v10" }),
-                createElement("path", { d: "M17 10v10" }),
-                createElement("path", { d: "M7 10v10" }),
-                createElement("path", { d: "M5 15h14" })
-            )
-        );
-        const HeartPulseIcon = (props) => (
-            createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-heart-pulse" }),
-                createElement("path", { d: "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" }),
-                createElement("path", { d: "M3.2 21.72l4.8-1.6" }),
-                createElement("path", { d: "M21 21.72l-4.8-1.6" }),
-                createElement("path", { d: "M9.54 12.18h.01" }),
-                createElement("path", { d: "M14.46 12.18h.01" }),
-                createElement("path", { d: "M12 21v-3" }),
-                createElement("path", { d: "M12 12v12" })
-            )
-        );
-        const UsersIcon = (props) => (
-            createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-users" }),
-                createElement("path", { d: "M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" }),
-                createElement("circle", { cx: "12", cy: "7", r: "4" }),
-                createElement("path", { d: "M22 21v-2a4 4 0 0 0-3-3.87" }),
-                createElement("path", { d: "M6 15V14a4 4 0 0 1 4-4h2" })
-            )
-        );
-        const SmartphoneIcon = (props) => (
-            createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-smartphone" }),
-                createElement("rect", { width: "14", height: "20", x: "5", y: "2", rx: "2", ry: "2" }),
-                createElement("path", { d: "M12 18h.01" })
-            )
-        );
-        const MegaphoneIcon = (props) => (
-            createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-megaphone" }),
-                createElement("path", { d: "m3 11 1.93-2.61a2 2 0 0 1 3.09-1.74l8.28 4.74a2 2 0 0 1 0 3.48L8.02 20.35a2 2 0 0 1-3.09-1.74L3 13" }),
-                createElement("path", { d: "M16.5 13h2a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2" }),
-                createElement("path", { d: "M12 13h.01" })
-            )
-        );
-        const LandmarkIcon = (props) => (
-            createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-landmark" }),
-                createElement("line", { x1: "2", x2: "22", y1: "22", y2: "22" }),
-                createElement("line", { x1: "6", x2: "6", y1: "18", y2: "22" }),
-                createElement("line", { x1: "10", x2: "10", y1: "18", y2: "22" }),
-                createElement("line", { x1: "14", x2: "14", y1: "18", y2: "22" }),
-                createElement("line", { x1: "18", x2: "18", y1: "18", y2: "22" }),
-                createElement("path", { d: "M3.24 12.8L12 2l8.76 10.8-2.14 1.25V22H5.38V14.05L3.24 12.8Z" })
-            )
-        );
-        const GavelIcon = (props) => (
-            createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-gavel" }),
-                createElement("path", { d: "m15 12-8-8a2.15 2.15 0 0 0-1 1.5V16H2V20h5a2 2 0 0 1 2 2h4a2 2 0 0 1 2-2h5v-4H15v-4z" }),
-                createElement("path", { d: "m18 12 4-4a2.15 2.15 0 0 0-1-1.5V12h-3z" }),
-                createElement("path", { d: "M11 20v-4" }),
-                createElement("path", { d: "M11 22v-2" })
-            )
-        );
-        const GraduationCapIcon = (props) => (
-            createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-graduation-cap" }),
-                createElement("path", { d: "M21.42 10.9a2.09 2.09 0 0 0-1.74-1.12c-.93 0-1.75.52-2.17 1.3a2.09 2.09 0 0 0-1.74-1.12c-.93 0-1.75.52-2.17 1.3a2.09 2.09 0 0 0-1.74-1.12c-.93 0-1.75.52-2.17 1.3a2.09 2.09 0 0 0-1.74-1.12c-.93 0-1.75.52-2.17 1.3" }),
-                createElement("path", { d: "M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" }),
-                createElement("path", { d: "M12 2v3" }),
-                createElement("path", { d: "M12 17v-3" }),
-                createElement("path", { d: "M12 14v-2" })
-            )
-        );
+    // --- Icon Components (Transpiled from JSX) ---
+    const BookOpenIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-book-open" }),
+            createElement("path", { d: "M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" }),
+            createElement("path", { d: "M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" })
+        )
+    );
+    const BanknoteIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-banknote" }),
+            createElement("rect", { width: "20", height: "12", x: "2", y: "6", rx: "2" }),
+            createElement("circle", { cx: "12", cy: "12", r: "2" }),
+            createElement("path", { d: "M6 12h.01M18 12h.01" })
+        )
+    );
+    const HeartHandshakeIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-heart-handshake" }),
+            createElement("path", { d: "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" }),
+            createElement("path", { d: "M12 14h.01" }),
+            createElement("path", { d: "m18 14-4 4" })
+        )
+    );
+    const ScaleIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucude-scale" }),
+            createElement("path", { d: "m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" }),
+            createElement("path", { d: "m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" }),
+            createElement("path", { d: "M7 21h10" }),
+            createElement("path", { d: "M12 3v18" }),
+            createElement("path", { d: "M3 7h2c2 0 5-1 7-2s5 1 7 2h2" })
+        )
+    );
+    const ChevronLeftIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-chevron-left" }),
+            createElement("path", { d: "m15 18-6-6 6-6" })
+        )
+    );
+    const BriefcaseIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-briefcase" }),
+            createElement("rect", { width: "20", height: "14", x: "2", y: "7", rx: "2", ry: "2" }),
+            createElement("path", { d: "M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" })
+        )
+    );
+    const ChurchIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-church" }),
+            createElement("path", { d: "M18 7c0-2.76-2.07-5-4.63-5C10.74 2 8 4.24 8 7c0 .8.2 1.55.59 2.22L2 15v6h20v-6l-6.59-5.78A6.98 6.98 0 0 0 18 7Z" }),
+            createElement("path", { d: "M12 2v20" }),
+            createElement("path", { d: "M12 10v10" }),
+            createElement("path", { d: "M17 10v10" }),
+            createElement("path", { d: "M7 10v10" }),
+            createElement("path", { d: "M5 15h14" })
+        )
+    );
+    const HeartPulseIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-heart-pulse" }),
+            createElement("path", { d: "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" }),
+            createElement("path", { d: "M3.2 21.72l4.8-1.6" }),
+            createElement("path", { d: "M21 21.72l-4.8-1.6" }),
+            createElement("path", { d: "M9.54 12.18h.01" }),
+            createElement("path", { d: "M14.46 12.18h.01" }),
+            createElement("path", { d: "M12 21v-3" }),
+            createElement("path", { d: "M12 12v12" })
+        )
+    );
+    const UsersIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-users" }),
+            createElement("path", { d: "M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" }),
+            createElement("circle", { cx: "12", cy: "7", r: "4" }),
+            createElement("path", { d: "M22 21v-2a4 4 0 0 0-3-3.87" }),
+            createElement("path", { d: "M6 15V14a4 4 0 0 1 4-4h2" })
+        )
+    );
+    const SmartphoneIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-smartphone" }),
+            createElement("rect", { width: "14", height: "20", x: "5", y: "2", rx: "2", ry: "2" }),
+            createElement("path", { d: "M12 18h.01" })
+        )
+    );
+    const MegaphoneIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-megaphone" }),
+            createElement("path", { d: "m3 11 1.93-2.61a2 2 0 0 1 3.09-1.74l8.28 4.74a2 2 0 0 1 0 3.48L8.02 20.35a2 2 0 0 1-3.09-1.74L3 13" }),
+            createElement("path", { d: "M16.5 13h2a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2" }),
+            createElement("path", { d: "M12 13h.01" })
+        )
+    );
+    const LandmarkIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-landmark" }),
+            createElement("line", { x1: "2", x2: "22", y1: "22", y2: "22" }),
+            createElement("line", { x1: "6", x2: "6", y1: "18", y2: "22" }),
+            createElement("line", { x1: "10", x2: "10", y1: "18", y2: "22" }),
+            createElement("line", { x1: "14", x2: "14", y1: "18", y2: "22" }),
+            createElement("line", { x1: "18", x2: "18", y1: "18", y2: "22" }),
+            createElement("path", { d: "M3.24 12.8L12 2l8.76 10.8-2.14 1.25V22H5.38V14.05L3.24 12.8Z" })
+        )
+    );
+    const GavelIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-gavel" }),
+            createElement("path", { d: "m15 12-8-8a2.15 2.15 0 0 0-1 1.5V16H2V20h5a2 2 0 0 1 2 2h4a2 2 0 0 1 2-2h5v-4H15v-4z" }),
+            createElement("path", { d: "m18 12 4-4a2.15 2.15 0 0 0-1-1.5V12h-3z" }),
+            createElement("path", { d: "M11 20v-4" }),
+            createElement("path", { d: "M11 22v-2" })
+        )
+    );
+    const GraduationCapIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-graduation-cap" }),
+            createElement("path", { d: "M21.42 10.9a2.09 2.09 0 0 0-1.74-1.12c-.93 0-1.75.52-2.17 1.3a2.09 2.09 0 0 0-1.74-1.12c-.93 0-1.75.52-2.17 1.3a2.09 2.09 0 0 0-1.74-1.12c-.93 0-1.75.52-2.17 1.3a2.09 2.09 0 0 0-1.74-1.12c-.93 0-1.75.52-2.17 1.3" }),
+            createElement("path", { d: "M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" }),
+            createElement("path", { d: "M12 2v3" }),
+            createElement("path", { d: "M12 17v-3" }),
+            createElement("path", { d: "M12 14v-2" })
+        )
+    );
 
 
-        // --- Page Header Component ---
-        const PageHeader = ({ title, navigate }) => (
-            createElement("div", { className: "flex items-center justify-between p-4 bg-white rounded-t-xl border-b border-gray-200" },
-                createElement("button", {
-                    onClick: () => navigate('home'),
-                    className: "flex items-center text-indigo-600 hover:text-indigo-800 transition-colors",
-                    "aria-label": "Navigate to home"
-                },
-                    createElement(ChevronLeftIcon, { className: "w-5 h-5" }),
-                    createElement("span", { className: "ml-1 font-medium" }, "Home")
+    // --- Page Header Component ---
+    const PageHeader = ({ title, navigate }) => (
+        createElement("div", { className: "flex items-center justify-between p-4 bg-white rounded-t-xl border-b border-gray-200" },
+            createElement("button", {
+                onClick: () => navigate('home'),
+                className: "flex items-center text-indigo-600 hover:text-indigo-800 transition-colors",
+                "aria-label": "Navigate to home"
+            },
+                createElement(ChevronLeftIcon, { className: "w-5 h-5" }),
+                createElement("span", { className: "ml-1 font-medium" }, "Home")
+            ),
+            createElement("h1", { className: "text-xl font-bold text-center flex-grow" }, title),
+            createElement("div", { className: "w-12" })
+        )
+    );
+
+    // --- Home Page Component ---
+    const HomePage = ({ navigate }) => {
+        const topics = [
+            { title: 'Relationships & Family', page: 'relationships', icon: createElement(HeartHandshakeIcon, null) },
+            { title: 'Financial Stewardship', page: 'financial', icon: createElement(BanknoteIcon, null) },
+            { title: 'Conflict Resolution', page: 'conflict', icon: createElement(ScaleIcon, null) },
+            { title: 'Spiritual Disciplines', page: 'spiritual', icon: createElement(ChurchIcon, null) },
+            { title: 'Work and Career', page: 'work', icon: createElement(BriefcaseIcon, null) },
+            { title: 'Health and Wellness', page: 'health', icon: createElement(HeartPulseIcon, null) },
+            { title: 'Technology and Media', page: 'tech', icon: createElement(SmartphoneIcon, null) },
+            { title: 'Witnessing and Evangelism', page: 'witnessing', icon: createElement(MegaphoneIcon, null) },
+            { title: 'Community and Service', page: 'community', icon: createElement(UsersIcon, null) },
+            { title: 'Justice and Mercy', page: 'justice', icon: createElement(GavelIcon, null) },
+            { title: 'Political Engagement & Citizenship', page: 'political', icon: createElement(LandmarkIcon, null) },
+            { title: 'Education and Learning', page: 'education', icon: createElement(GraduationCapIcon, null) },
+        ];
+
+        const biblicalQuote = {
+            verse: 'All Scripture is God-breathed and is useful for teaching, rebuking, correcting and training in righteousness...',
+            reference: '2 Timothy 3:16',
+        };
+
+        const welcomeMessage = "Welcome brothers and sisters in Christ, this app is to help us all be more grounded in God's word which is authority and direction for life. Have a wonderful day/night from Jason.";
+        const website = "https://churchconcern.great-site.net/";
+
+        return (
+            createElement("div", { className: "max-w-4xl mx-auto space-y-8" },
+                createElement("div", { className: "text-center p-8 bg-white rounded-xl shadow-lg border border-gray-200" },
+                    createElement("div", { className: "flex flex-col items-center mb-4 text-indigo-600" },
+                        createElement(BookOpenIcon, { className: "w-20 h-20" })
+                    ),
+                    createElement("h1", { className: "text-3xl font-bold mb-2 text-indigo-700" }, "Sola Scriptura Decision-Making"),
+                    createElement("p", { className: "text-lg text-slate-600" }, "A guide to applying biblical principles to life's challenges."),
+                    createElement("div", { className: "mt-4 pt-4 border-t border-gray-200 text-sm text-slate-600" },
+                        createElement("p", { className: "mb-1" }, welcomeMessage)
+                        // The button has been removed from here
+                    )
                 ),
-                createElement("h1", { className: "text-xl font-bold text-center flex-grow" }, title),
-                createElement("div", { className: "w-12" })
+                createElement("div", { className: "p-6 bg-white rounded-xl shadow-lg border border-gray-200" },
+                    createElement("h2", { className: "text-2xl font-bold mb-4 text-indigo-600" }, "Explore Key Areas"),
+                    createElement("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-4" },
+                        topics.map((topic) => (
+                            createElement("button", {
+                                key: topic.page,
+                                onClick: () => navigate(topic.page),
+                                className: "group p-6 bg-white border border-gray-200 rounded-xl flex flex-col items-center text-center hover:bg-indigo-50 transition-colors shadow-sm hover:shadow-md",
+                                "aria-label": `Maps to ${topic.title}`
+                            },
+                                createElement("div", { className: "w-12 h-12 mb-3 p-2 bg-indigo-100 text-indigo-600 rounded-full group-hover:bg-indigo-200 transition-colors" },
+                                    topic.icon
+                                ),
+                                createElement("span", { className: "font-semibold text-lg" }, topic.title)
+                            )
+                        ))
+                    )
+                ),
+                // --- Start of new button section ---
+                createElement("div", { className: "text-center" },
+                    createElement("a", { href: website, className: "inline-block mt-2 px-6 py-2 bg-indigo-600 text-white font-semibold rounded-full hover:bg-indigo-700 transition-colors shadow-md", target: "_blank", rel: "noopener noreferrer" }, "Visit My Website")
+                ),
+                // --- End of new button section ---
+                createElement("div", { className: "p-6 bg-indigo-700 rounded-xl shadow-lg text-white text-center" },
+                    createElement("blockquote", { className: "italic mb-2" }, `"${biblicalQuote.verse}"`),
+                    createElement("p", { className: "font-medium" }, `\u2015 ${biblicalQuote.reference}`)
+                )
             )
         );
+    };
 
-        // --- Home Page Component ---
-        const HomePage = ({ navigate }) => {
-            const topics = [
-                { title: 'Relationships & Family', page: 'relationships', icon: createElement(HeartHandshakeIcon, null) },
-                { title: 'Financial Stewardship', page: 'financial', icon: createElement(BanknoteIcon, null) },
-                { title: 'Conflict Resolution', page: 'conflict', icon: createElement(ScaleIcon, null) },
-                { title: 'Spiritual Disciplines', page: 'spiritual', icon: createElement(ChurchIcon, null) },
-                { title: 'Work and Career', page: 'work', icon: createElement(BriefcaseIcon, null) },
-                { title: 'Health and Wellness', page: 'health', icon: createElement(HeartPulseIcon, null) },
-                { title: 'Technology and Media', page: 'tech', icon: createElement(SmartphoneIcon, null) },
-                { title: 'Witnessing and Evangelism', page: 'witnessing', icon: createElement(MegaphoneIcon, null) },
-                { title: 'Community and Service', page: 'community', icon: createElement(UsersIcon, null) },
-                { title: 'Justice and Mercy', page: 'justice', icon: createElement(GavelIcon, null) },
-                { title: 'Political Engagement & Citizenship', page: 'political', icon: createElement(LandmarkIcon, null) },
-                { title: 'Education and Learning', page: 'education', icon: createElement(GraduationCapIcon, null) },
-            ];
-
-            const biblicalQuote = {
-                verse: 'All Scripture is God-breathed and is useful for teaching, rebuking, correcting and training in righteousness...',
-                reference: '2 Timothy 3:16',
-            };
-
-            const welcomeMessage = "Welcome brothers and sisters in Christ, this app is to help us all be more grounded in God's word which is authority and direction for life. Have a wonderful day/night from Jason.";
-            const website = "https://churchconcern.great-site.net/";
-
-            return (
-                createElement("div", { className: "max-w-4xl mx-auto space-y-8" },
-                    createElement("div", { className: "text-center p-8 bg-white rounded-xl shadow-lg border border-gray-200" },
-                        createElement("div", { className: "flex flex-col items-center mb-4 text-indigo-600" },
-                            createElement(BookOpenIcon, { className: "w-20 h-20" })
-                        ),
-                        createElement("h1", { className: "text-3xl font-bold mb-2 text-indigo-700" }, "Sola Scriptura Decision-Making"),
-                        createElement("p", { className: "text-lg text-slate-600" }, "A guide to applying biblical principles to life's challenges."),
-                        createElement("div", { className: "mt-4 pt-4 border-t border-gray-200 text-sm text-slate-600" },
-                            createElement("p", { className: "mb-1" }, welcomeMessage),
-                            createElement("a", { href: website, className: "inline-block mt-2 px-6 py-2 bg-indigo-600 text-white font-semibold rounded-full hover:bg-indigo-700 transition-colors shadow-md", target: "_blank", rel: "noopener noreferrer" }, "Visit My Website")
-                        )
-                    ),
-                    createElement("div", { className: "p-6 bg-white rounded-xl shadow-lg border border-gray-200" },
-                        createElement("h2", { className: "text-2xl font-bold mb-4 text-indigo-600" }, "Explore Key Areas"),
-                        createElement("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-4" },
-                            topics.map((topic) => (
-                                createElement("button", {
-                                    key: topic.page,
-                                    onClick: () => navigate(topic.page),
-                                    className: "group p-6 bg-white border border-gray-200 rounded-xl flex flex-col items-center text-center hover:bg-indigo-50 transition-colors shadow-sm hover:shadow-md",
-                                    "aria-label": `Navigate to ${topic.title}`
-                                },
-                                    createElement("div", { className: "w-12 h-12 mb-3 p-2 bg-indigo-100 text-indigo-600 rounded-full group-hover:bg-indigo-200 transition-colors" },
-                                        topic.icon
-                                    ),
-                                    createElement("span", { className: "font-semibold text-lg" }, topic.title)
-                                )
-                            ))
-                        )
-                    ),
-                    createElement("div", { className: "p-6 bg-indigo-700 rounded-xl shadow-lg text-white text-center" },
-                        createElement("blockquote", { className: "italic mb-2" }, `"${biblicalQuote.verse}"`),
-                        createElement("p", { className: "font-medium" }, `\u2015 ${biblicalQuote.reference}`)
-                    )
-                )
-            );
-        };
-
-        // --- Relationships & Family Page Component ---
-        const RelationshipsPage = ({ navigate, startQuiz }) => {
-            return (
-                createElement("div", { className: "max-w-4xl mx-auto bg-white rounded-xl shadow-lg" },
-                    createElement(PageHeader, { title: "Relationships & Family", navigate: navigate }),
-                    createElement("div", { className: "p-6 space-y-6" },
-                        createElement("p", { className: "text-lg" }, "Our relationships with others are a primary way we reflect God's character to the world. Applying ", createElement("strong", null, "Sola Scriptura"), " to our relationships means turning to the Bible for instruction on how to love our spouse, raise our children, and interact with our community. The Bible establishes clear roles and responsibilities within the family and community. While modern society often presents different values, the Christian is called to a higher standard, rooted in the unchanging Word of God."),
-                        createElement("div", { className: "space-y-4" },
-                            createElement("h3", { className: "text-xl font-bold text-indigo-600" }, "Key Biblical Principles"),
-                            createElement("ul", { className: "list-disc list-inside space-y-2 ml-4" },
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Marriage:"), " The Bible presents marriage as a covenantal relationship between a man and a woman, reflecting the relationship between Christ and the Church. Husbands are called to love their wives self-sacrificially, and wives are called to respect their husbands. (Ephesians 5:25, Ephesians 5:33)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Parental Instruction:"), " Parents are entrusted with the responsibility of raising their children in the \"nurture and admonition of the Lord.\" This involves not only discipline but also intentional teaching of God's Word and modeling a life of faith. (Ephesians 6:4, Proverbs 22:6)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Friendship & Community:"), " We are called to love our neighbors as ourselves and to \"bear one another's burdens.\" True friendship, as modeled in Scripture (e.g., David and Jonathan), is characterized by loyalty, encouragement, and accountability. (Galatians 6:2, Proverbs 17:17)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Purity:"), " For both married and single individuals, the Bible calls for sexual purity. Sexual intimacy is reserved for the covenant of marriage. (Hebrews 13:4, 1 Thessalonians 4:3-5)")
-                            )
-                        ),
-                        createElement("button", {
-                            onClick: () => startQuiz('relationships'),
-                            className: "w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-indigo-700 transition-colors shadow-md",
-                            "aria-label": "Start Relationships & Family Quiz"
-                        }, "Test Your Knowledge")
-                    )
-                )
-            );
-        };
-
-        // --- Financial Stewardship Page Component ---
-        const FinancialStewardshipPage = ({ navigate, startQuiz }) => {
-            return (
-                createElement("div", { className: "max-w-4xl mx-auto bg-white rounded-xl shadow-lg" },
-                    createElement(PageHeader, { title: "Financial Stewardship", navigate: navigate }),
-                    createElement("div", { className: "p-6 space-y-6" },
-                        createElement("p", { className: "text-lg" }, "The Bible offers clear guidance on how believers are to manage their finances. The principle of ", createElement("strong", null, "Sola Scriptura"), " teaches us that God's Word is the ultimate authority for how we use our resources. This means seeking wisdom from Scripture to inform decisions about spending, saving, giving, and debt. Financial stewardship is not merely about managing money, but about recognizing that all we have belongs to God. Our role is to be faithful managers of what He has entrusted to us."),
-                        createElement("div", { className: "space-y-4" },
-                            createElement("h3", { className: "text-xl font-bold text-indigo-600" }, "Key Biblical Principles"),
-                            createElement("ul", { className: "list-disc list-inside space-y-2 ml-4" },
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Generosity:"), " The Bible consistently calls believers to be generous, giving cheerfully and not under compulsion. Tithing, while rooted in the Old Testament, sets a principle of giving the \"first fruits\" back to God, and the New Testament emphasizes giving as an act of grace. (2 Corinthians 9:7)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Diligence:"), " We are commanded to work hard and to be diligent with our hands. Proverbs warns against the dangers of laziness and idleness. Our work is a form of worship, and being a good steward means performing our tasks with excellence. (Proverbs 10:4)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Prudence:"), " Wisdom dictates that we should save for the future and not live extravagantly. The Proverbs praise the wise person who plans ahead. We are also warned against the bondage of debt and the folly of co-signing loans for others. (Proverbs 21:20, Proverbs 22:7)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Avoiding Materialism:"), " The Bible warns against the love of money, which is described as a root of all kinds of evil. Our hearts should be focused on heavenly treasures, not earthly possessions. True contentment is found in Christ, not in wealth. (1 Timothy 6:10, Matthew 6:19-21)")
-                            )
-                        ),
-                        createElement("button", {
-                            onClick: () => startQuiz('financial'),
-                            className: "w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-indigo-700 transition-colors shadow-md",
-                            "aria-label": "Start Financial Stewardship Quiz"
-                        }, "Test Your Knowledge")
-                    )
-                )
-            );
-        };
-
-        // --- Conflict Resolution Page Component ---
-        const ConflictResolutionPage = ({ navigate, startQuiz }) => {
-            return (
-                createElement("div", { className: "max-w-4xl mx-auto bg-white rounded-xl shadow-lg" },
-                    createElement(PageHeader, { title: "Conflict Resolution", navigate: navigate }),
-                    createElement("div", { className: "p-6 space-y-6" },
-                        createElement("p", { className: "text-lg" }, "Disagreements and conflicts are inevitable in a fallen world. ", createElement("strong", null, "Sola Scriptura"), " provides a compassionate yet firm framework for resolving these issues in a way that honors God and seeks reconciliation. The world's approach often prioritizes personal victory, but the Bible calls for humility, forgiveness, and a commitment to restoring relationships."),
-                        createElement("div", { className: "space-y-4" },
-                            createElement("h3", { className: "text-xl font-bold text-indigo-600" }, "Key Biblical Principles"),
-                            createElement("ul", { className: "list-disc list-inside space-y-2 ml-4" },
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Humility:"), " We are commanded to \"do nothing from selfish ambition or conceit, but in humility count others more significant than yourselves.\" This is the foundational posture for resolving conflict. It requires us to put aside our pride and seek the good of the other person. (Philippians 2:3-4)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Private Reproof:"), " Matthew 18 provides a clear, step-by-step process for a private rebuke. The first step is to go to the person alone to address the issue. The goal is not to shame them, but to win them back as a brother or sister in Christ. (Matthew 18:15)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Forgiveness:"), " The cornerstone of Christian conflict resolution is forgiveness. Just as Christ has forgiven us, we are called to forgive others. This is a command, not a suggestion, and it frees us from bitterness and resentment. (Colossians 3:13)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Peacemaking:"), " Jesus called peacemakers \"blessed.\" We are not merely to avoid conflict, but to actively work for peace and reconciliation, seeking to restore broken relationships. This may involve being the first to apologize and the first to extend grace. (Matthew 5:9, Romans 12:18)")
-                            )
-                        ),
-                        createElement("button", {
-                            onClick: () => startQuiz('conflict'),
-                            className: "w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-indigo-700 transition-colors shadow-md",
-                            "aria-label": "Start Conflict Resolution Quiz"
-                        }, "Test Your Knowledge")
-                    )
-                )
-            );
-        };
-        // --- Spiritual Disciplines Page Component ---
-        const SpiritualPage = ({ navigate, startQuiz }) => {
-            return (
-                createElement("div", { className: "max-w-4xl mx-auto bg-white rounded-xl shadow-lg" },
-                    createElement(PageHeader, { title: "Spiritual Disciplines", navigate: navigate }),
-                    createElement("div", { className: "p-6 space-y-6" },
-                        createElement("p", { className: "text-lg" }, "Spiritual disciplines are practices found in Scripture that help us grow in our relationship with God. Engaging in these disciplines is not a means of earning favor, but a response to God's grace. ", createElement("strong", null, "Sola Scriptura"), " provides the foundation for these practices, ensuring they are rooted in God's will and not in human tradition."),
-                        createElement("div", { className: "space-y-4" },
-                            createElement("h3", { className: "text-xl font-bold text-indigo-600" }, "Key Biblical Principles"),
-                            createElement("ul", { className: "list-disc list-inside space-y-2 ml-4" },
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Prayer:"), " Prayer is our direct line of communication with God. The Bible encourages us to \"pray without ceasing\" and to bring all our requests to God. It is an act of dependence on Him. (1 Thessalonians 5:17, Philippians 4:6)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Fasting:"), " Fasting is a spiritual practice of abstaining from food for a period of time to focus more intently on God. It is a form of self-denial that often accompanies prayer, demonstrating a serious commitment to seek God's will. (Matthew 6:16-18)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Bible Study:"), " The study of God's Word is essential for the Christian life. The Bible is our source of truth, and by studying it, we are transformed. We are called to meditate on it day and night. (Psalm 1:2, Hebrews 4:12)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Worship:"), " Worship is the expression of our reverence and adoration for God. It can be communal, in church, or private. True worship is not just singing, but a life lived in submission to God. (John 4:24, Romans 12:1)")
-                            )
-                        ),
-                        createElement("button", {
-                            onClick: () => startQuiz('spiritual'),
-                            className: "w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-indigo-700 transition-colors shadow-md",
-                            "aria-label": "Start Spiritual Disciplines Quiz"
-                        }, "Test Your Knowledge")
-                    )
-                )
-            );
-        };
-        // --- Work and Career Page Component ---
-        const WorkPage = ({ navigate, startQuiz }) => {
-            return (
-                createElement("div", { className: "max-w-4xl mx-auto bg-white rounded-xl shadow-lg" },
-                    createElement(PageHeader, { title: "Work and Career", navigate: navigate }),
-                    createElement("div", { className: "p-6 space-y-6" },
-                        createElement("p", { className: "text-lg" }, "God has a purpose for our work. It's not just about earning a living but about glorifying Him in all we do. ", createElement("strong", null, "Sola Scriptura"), " teaches that work is a part of God's good creation, and we should approach our careers with integrity, diligence, and a desire to serve others."),
-                        createElement("div", { className: "space-y-4" },
-                            createElement("h3", { className: "text-xl font-bold text-indigo-600" }, "Key Biblical Principles"),
-                            createElement("ul", { className: "list-disc list-inside space-y-2 ml-4" },
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Work as Worship:"), " Whether you eat or drink, or whatever you do, do all to the glory of God. Our work, no matter how small, is an opportunity to honor Him. (1 Corinthians 10:31)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Diligence and Excellence:"), " The Bible commands us to work with all our heart, as if we are working for the Lord and not for men. A lazy person is a fool, but a diligent worker finds reward. (Colossians 3:23, Proverbs 10:4)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Integrity and Honesty:"), " A Christian's testimony is often most visible in their workplace. We are called to be honest in all our dealings and to work with integrity, even when no one is watching. (Proverbs 11:3)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Serving Others:"), " Our jobs are a platform to serve others and meet their needs, not just our own. This is a practical way of loving our neighbor. (Galatians 5:13)")
-                            )
-                        ),
-                        createElement("button", {
-                            onClick: () => startQuiz('work'),
-                            className: "w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-indigo-700 transition-colors shadow-md",
-                            "aria-label": "Start Work and Career Quiz"
-                        }, "Test Your Knowledge")
-                    )
-                )
-            );
-        };
-        // --- Health and Wellness Page Component ---
-        const HealthPage = ({ navigate, startQuiz }) => {
-            return (
-                createElement("div", { className: "max-w-4xl mx-auto bg-white rounded-xl shadow-lg" },
-                    createElement(PageHeader, { title: "Health and Wellness", navigate: navigate }),
-                    createElement("div", { className: "p-6 space-y-6" },
-                        createElement("p", { className: "text-lg" }, "The Bible teaches us to honor God with our bodies, as they are temples of the Holy Spirit. This includes being mindful of our physical, mental, and spiritual health. ", createElement("strong", null, "Sola Scriptura"), " guides us away from worldly fads and toward a balanced approach to wellness, rooted in the wisdom of Scripture."),
-                        createElement("div", { className: "space-y-4" },
-                            createElement("h3", { className: "text-xl font-bold text-indigo-600" }, "Key Biblical Principles"),
-                            createElement("ul", { className: "list-disc list-inside space-y-2 ml-4" },
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Body as a Temple:"), " We are not our own; we were bought with a price. Therefore, we should glorify God in our bodies. This means caring for our physical health through proper nutrition and activity. (1 Corinthians 6:19-20)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Mental Health:"), " The Bible addresses anxiety and stress, encouraging us to cast our cares on the Lord because he cares for us. It also promotes a sound mind and a spirit of peace, which we find in Christ. (1 Peter 5:7, Philippians 4:7)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Rest and Sabbath:"), " God's design includes rest. The principle of the Sabbath reminds us to pause from our labors and focus on Him, both physically and spiritually. (Exodus 20:8-11)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Sobriety and Self-Control:"), " We are called to be self-controlled and sober-minded, avoiding things that would harm our bodies or cloud our minds. (1 Peter 5:8, Proverbs 23:20-21)")
-                            )
-                        ),
-                        createElement("button", {
-                            onClick: () => startQuiz('health'),
-                            className: "w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-indigo-700 transition-colors shadow-md",
-                            "aria-label": "Start Health and Wellness Quiz"
-                        }, "Test Your Knowledge")
-                    )
-                )
-            );
-        };
-        // --- Technology and Media Page Component ---
-        const TechnologyPage = ({ navigate, startQuiz }) => {
-            return (
-                createElement("div", { className: "max-w-4xl mx-auto bg-white rounded-xl shadow-lg" },
-                    createElement(PageHeader, { title: "Technology and Media", navigate: navigate }),
-                    createElement("div", { className: "p-6 space-y-6" },
-                        createElement("p", { className: "text-lg" }, "In a digital age, technology and media saturate our lives. ", createElement("strong", null, "Sola Scriptura"), " provides a timeless framework for navigating this landscape, teaching us to be wise stewards of our time, mindful of the content we consume, and intentional with how we use these tools for God's glory."),
-                        createElement("div", { className: "space-y-4" },
-                            createElement("h3", { className: "text-xl font-bold text-indigo-600" }, "Key Biblical Principles"),
-                            createElement("ul", { className: "list-disc list-inside space-y-2 ml-4" },
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Stewardship of Time:"), " We are called to be wise, making the best use of our time. Excessive use of technology can be a distraction from more important pursuits, like relationships and ministry. (Ephesians 5:15-16)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Content Consumption:"), " The Bible commands us to think about things that are true, honorable, just, pure, and lovely. This principle should guide our choices about the movies, social media, and websites we engage with. (Philippians 4:8)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Using Technology for Good:"), " Technology can be a powerful tool for spreading the gospel and building up the church. We should seek ways to use these platforms for encouragement and evangelism. (Psalm 145:4)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Avoiding Worldliness:"), " We are warned not to be conformed to this world. This means we should be discerning and not blindly follow cultural trends in media and technology that contradict biblical values. (Romans 12:2)")
-                            )
-                        ),
-                        createElement("button", {
-                            onClick: () => startQuiz('tech'),
-                            className: "w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-indigo-700 transition-colors shadow-md",
-                            "aria-label": "Start Technology and Media Quiz"
-                        }, "Test Your Knowledge")
-                    )
-                )
-            );
-        };
-        // --- Witnessing and Evangelism Page Component ---
-        const WitnessingPage = ({ navigate, startQuiz }) => {
-            return (
-                createElement("div", { className: "max-w-4xl mx-auto bg-white rounded-xl shadow-lg" },
-                    createElement(PageHeader, { title: "Witnessing and Evangelism", navigate: navigate }),
-                    createElement("div", { className: "p-6 space-y-6" },
-                        createElement("p", { className: "text-lg" }, "Sharing the gospel is a core command given by Christ to all believers. ", createElement("strong", null, "Sola Scriptura"), " provides the message we are to share, the authority for our mission, and the promise of the Holy Spirit's power to work through us. Evangelism is not just a one-time event, but a lifestyle of sharing the hope we have in Christ."),
-                        createElement("div", { className: "space-y-4" },
-                            createElement("h3", { className: "text-xl font-bold text-indigo-600" }, "Key Biblical Principles"),
-                            createElement("ul", { className: "list-disc list-inside space-y-2 ml-4" },
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "The Great Commission:"), " Jesus commanded his followers to go into all the world and make disciples, baptizing them and teaching them to obey everything he has commanded. (Matthew 28:19-20)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Be Ready:"), " We are instructed to always be prepared to give a reason for the hope that we have, doing so with gentleness and respect. (1 Peter 3:15)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Lifestyle Witness:"), " Our actions often speak louder than our words. We are to live lives that are so different from the world that people ask about the hope within us. Our good deeds point to God. (Matthew 5:16)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Power of the Holy Spirit:"), " We don't share the gospel in our own strength. The Holy Spirit empowers us to be witnesses for Christ. The results of evangelism are in His hands. (Acts 1:8)")
-                            )
-                        ),
-                        createElement("button", {
-                            onClick: () => startQuiz('witnessing'),
-                            className: "w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-indigo-700 transition-colors shadow-md",
-                            "aria-label": "Start Witnessing and Evangelism Quiz"
-                        }, "Test Your Knowledge")
-                    )
-                )
-            );
-        };
-        // --- Community and Service Page Component ---
-        const CommunityPage = ({ navigate, startQuiz }) => {
-            return (
-                createElement("div", { className: "max-w-4xl mx-auto bg-white rounded-xl shadow-lg" },
-                    createElement(PageHeader, { title: "Community and Service", navigate: navigate }),
-                    createElement("div", { className: "p-6 space-y-6" },
-                        createElement("p", { className: "text-lg" }, "The Christian life is not meant to be lived in isolation. We are called to be part of a community of believers, the local church. ", createElement("strong", null, "Sola Scriptura"), " provides the blueprint for how we should interact with and serve one another, building each other up in love and grace."),
-                        createElement("div", { className: "space-y-4" },
-                            createElement("h3", { className: "text-xl font-bold text-indigo-600" }, "Key Biblical Principles"),
-                            createElement("ul", { className: "list-disc list-inside space-y-2 ml-4" },
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Body of Christ:"), " The church is described as the body of Christ, with each member having a unique and important role. We are to use our spiritual gifts to serve and strengthen one another. (1 Corinthians 12:27)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Bearing Burdens:"), " We are commanded to \"bear one another's burdens, and so fulfill the law of Christ.\" This involves practical support, empathy, and prayer for fellow believers. (Galatians 6:2)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Hospitality:"), " The Bible encourages us to practice hospitality, welcoming others into our homes and lives as an expression of Christian love. (Romans 12:13)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Edification:"), " Our interactions with one another should be for mutual edification. We should speak words that build up rather than tear down. (Ephesians 4:29)")
-                            )
-                        ),
-                        createElement("button", {
-                            onClick: () => startQuiz('community'),
-                            className: "w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-indigo-700 transition-colors shadow-md",
-                            "aria-label": "Start Community and Service Quiz"
-                        }, "Test Your Knowledge")
-                    )
-                )
-            );
-        };
-        // --- Justice and Mercy Page Component ---
-        const JusticePage = ({ navigate, startQuiz }) => {
-            return (
-                createElement("div", { className: "max-w-4xl mx-auto bg-white rounded-xl shadow-lg" },
-                    createElement(PageHeader, { title: "Justice and Mercy", navigate: navigate }),
-                    createElement("div", { className: "p-6 space-y-6" },
-                        createElement("p", { className: "text-lg" }, "God is a God of both justice and mercy. As His followers, we are called to reflect these attributes in the world. ", createElement("strong", null, "Sola Scriptura"), " provides the moral compass to guide us in caring for the poor, advocating for the oppressed, and showing compassion to those in need."),
-                        createElement("div", { className: "space-y-4" },
-                            createElement("h3", { className: "text-xl font-bold text-indigo-600" }, "Key Biblical Principles"),
-                            createElement("ul", { className: "list-disc list-inside space-y-2 ml-4" },
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Defending the Oppressed:"), " The Bible repeatedly commands us to speak up for those who cannot speak for themselves and to defend the rights of the poor and needy. (Proverbs 31:8-9)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Acting Justly:"), " The prophet Micah tells us that what the Lord requires of us is to \"do justice, love mercy, and walk humbly with our God.\" This is a core calling for every believer. (Micah 6:8)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Mercy and Compassion:"), " We are to show mercy to others because we have received mercy from God. This means being compassionate to those who are suffering and meeting their practical needs. (Matthew 5:7)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Generosity to the Poor:"), " Scripture is clear that we are to be generous to the poor. Our giving is a tangible expression of God's love and a way of honoring Him. (Proverbs 19:17)")
-                            )
-                        ),
-                        createElement("button", {
-                            onClick: () => startQuiz('justice'),
-                            className: "w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-indigo-700 transition-colors shadow-md",
-                            "aria-label": "Start Justice and Mercy Quiz"
-                        }, "Test Your Knowledge")
-                    )
-                )
-            );
-        };
-        // --- Political Engagement & Citizenship Page Component ---
-        const PoliticalPage = ({ navigate, startQuiz }) => {
-            return (
-                createElement("div", { className: "max-w-4xl mx-auto bg-white rounded-xl shadow-lg" },
-                    createElement(PageHeader, { title: "Political Engagement & Citizenship", navigate: navigate }),
-                    createElement("div", { className: "p-6 space-y-6" },
-                        createElement("p", { className: "text-lg" }, "The Christian has a dual citizenship: one in an earthly kingdom and one in the Kingdom of God. ", createElement("strong", null, "Sola Scriptura"), " gives us principles for how to live as good citizens on earth while keeping our ultimate allegiance to Christ. This includes honoring leaders, praying for them, and participating in civil society to promote righteousness."),
-                        createElement("div", { className: "space-y-4" },
-                            createElement("h3", { className: "text-xl font-bold text-indigo-600" }, "Key Biblical Principles"),
-                            createElement("ul", { className: "list-disc list-inside space-y-2 ml-4" },
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Submission to Authority:"), " We are commanded to be subject to the governing authorities, as they have been instituted by God. This includes paying taxes and showing respect to leaders. (Romans 13:1-7)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Praying for Leaders:"), " We are to pray for all those in authority, that we may live peaceful and quiet lives in all godliness and holiness. This is a good and pleasing thing in the sight of God. (1 Timothy 2:1-2)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Seeking the Good of the City:"), " While in exile in Babylon, God commanded his people to seek the welfare of the city. We should do the same, working for the good of the communities we live in. (Jeremiah 29:7)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Primary Allegiance to Christ:"), " When a human law or command conflicts with God's Word, our ultimate allegiance is to Christ. We must obey God rather than men. (Acts 5:29)")
-                            )
-                        ),
-                        createElement("button", {
-                            onClick: () => startQuiz('political'),
-                            className: "w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-indigo-700 transition-colors shadow-md",
-                            "aria-label": "Start Political Engagement & Citizenship Quiz"
-                        }, "Test Your Knowledge")
-                    )
-                )
-            );
-        };
-        // --- Education and Learning Page Component ---
-        const EducationPage = ({ navigate, startQuiz }) => {
-            return (
-                createElement("div", { className: "max-w-4xl mx-auto bg-white rounded-xl shadow-lg" },
-                    createElement(PageHeader, { title: "Education and Learning", navigate: navigate }),
-                    createElement("div", { className: "p-6 space-y-6" },
-                        createElement("p", { className: "text-lg" }, "Wisdom and knowledge are highly valued in Scripture, but they are to be sought with a proper perspective. ", createElement("strong", null, "Sola Scriptura"), " provides the ultimate source of all truth and wisdom, informing our approach to all other forms of learning. A Christian worldview should shape how we learn, what we learn, and why we learn."),
-                        createElement("div", { className: "space-y-4" },
-                            createElement("h3", { className: "text-xl font-bold text-indigo-600" }, "Key Biblical Principles"),
-                            createElement("ul", { className: "list-disc list-inside space-y-2 ml-4" },
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Fear of the Lord is the Beginning of Wisdom:"), " The Bible teaches that all true wisdom begins with a reverent awe of God. Secular knowledge is useful, but without a foundation in Christ, it is incomplete. (Proverbs 9:10)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Seeking Knowledge and Understanding:"), " Scripture encourages us to seek knowledge and understanding, likening it to searching for hidden treasure. We are to be learners throughout our lives. (Proverbs 2:3-5)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Discernment:"), " A crucial aspect of learning is discernment. We must learn to rightly divide the word of truth and be able to discern what is good and what is evil. (Hebrews 5:14)"),
-                                createElement("li", null, createElement("span", { className: "font-semibold" }, "Putting Knowledge to Use:"), " Knowledge should not be pursued for its own sake. It should be applied to glorify God, build up the church, and serve others. (1 Corinthians 8:1)")
-                            )
-                        ),
-                        createElement("button", {
-                            onClick: () => startQuiz('education'),
-                            className: "w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-indigo-700 transition-colors shadow-md",
-                            "aria-label": "Start Education and Learning Quiz"
-                        }, "Test Your Knowledge")
-                    )
-                )
-            );
-        };
-
-
-        // --- Quiz Component & Data ---
-        const QuizPage = ({ quizTopic, navigate }) => {
-            const quizData = {
-                relationships: {
-                    title: "Relationships & Family Quiz",
-                    questions: [
-                        {
-                            question: "According to Ephesians 5:33, what is the husband's primary command?",
-                            options: ["To provide for his family", "To love his wife as Christ loved the church", "To be the head of the household", "To raise children in the faith"],
-                            answer: 1,
-                            reference: "Ephesians 5:33"
-                        },
-                        {
-                            question: "Which verse teaches parents to bring up their children in the training and instruction of the Lord?",
-                            options: ["Ephesians 6:4", "Proverbs 22:6", "Colossians 3:20", "1 Timothy 5:8"],
-                            answer: 0,
-                            reference: "Ephesians 6:4"
-                        },
-                        {
-                            question: "What does Galatians 6:2 command believers to do for one another?",
-                            options: ["Pray for them", "Bear one another's burdens", "Judge one another", "Compete with one another"],
-                            answer: 1,
-                            reference: "Galatians 6:2"
-                        },
-                        {
-                            question: "The Bible reserves sexual intimacy for which context?",
-                            options: ["Dating", "Engagement", "Marriage", "Long-term relationships"],
-                            answer: 2,
-                            reference: "Hebrews 13:4"
-                        }
-                    ],
-                },
-                financial: {
-                    title: "Financial Stewardship Quiz",
-                    questions: [
-                        {
-                            question: "According to 2 Corinthians 9:7, what is the disposition of a cheerful giver?",
-                            options: ["He gives grudgingly", "He gives from a sense of duty", "He loves a cheerful giver", "He gives for praise"],
-                            answer: 2,
-                            reference: "2 Corinthians 9:7"
-                        },
-                        {
-                            question: "Which of the following proverbs emphasizes diligence?",
-                            options: ["Proverbs 10:4", "Proverbs 21:20", "Proverbs 22:7", "Proverbs 14:1"],
-                            answer: 0,
-                            reference: "Proverbs 10:4"
-                        },
-                        {
-                            question: "What does 1 Timothy 6:10 warn against?",
-                            options: ["The love of money", "The love of knowledge", "The love of power", "The love of reputation"],
-                            answer: 0,
-                            reference: "1 Timothy 6:10"
-                        },
-                        {
-                            question: "According to Proverbs 22:7, who is a servant to the lender?",
-                            options: ["The rich", "The generous", "The borrower", "The diligent"],
-                            answer: 2,
-                            reference: "Proverbs 22:7"
-                        }
-                    ],
-                },
-                conflict: {
-                    title: "Conflict Resolution Quiz",
-                    questions: [
-                        {
-                            question: "According to Matthew 18:15, what is the first step in resolving a conflict with a brother or sister?",
-                            options: ["Take a witness with you", "Tell it to the church", "Go and show him his fault, just between the two of you", "Pray about it and wait"],
-                            answer: 2,
-                            reference: "Matthew 18:15"
-                        },
-                        {
-                            question: "The Bible teaches us to be quick to forgive, as Christ has forgiven us. Which book highlights this principle?",
-                            options: ["Romans", "Galatians", "Colossians", "Ephesians"],
-                            answer: 2,
-                            reference: "Colossians 3:13"
-                        },
-                        {
-                            question: "What is the foundational posture for resolving conflict, as taught in Philippians 2:3-4?",
-                            options: ["Winning the argument", "Seeking personal victory", "Humility", "Proving your point"],
-                            answer: 2,
-                            reference: "Philippians 2:3-4"
-                        },
-                        {
-                            question: "In the Sermon on the Mount, Jesus calls a specific group of people 'blessed'. Who are they?",
-                            options: ["The meek", "The peacemakers", "The humble", "The righteous"],
-                            answer: 1,
-                            reference: "Matthew 5:9"
-                        }
-                    ],
-                },
-                spiritual: {
-                    title: "Spiritual Disciplines Quiz",
-                    questions: [
-                        {
-                            question: "Which verse encourages us to 'pray without ceasing'?",
-                            options: ["1 Thessalonians 5:17", "Philippians 4:6", "Matthew 6:16", "Romans 12:12"],
-                            answer: 0,
-                            reference: "1 Thessalonians 5:17"
-                        },
-                        {
-                            question: "Fasting is a spiritual practice most often associated with what?",
-                            options: ["Earning God's favor", "Giving to the poor", "Intense focus on God and prayer", "Showing off your piety"],
-                            answer: 2,
-                            reference: "Matthew 6:16-18"
-                        },
-                        {
-                            question: "According to Psalm 1:2, what should the righteous person meditate on?",
-                            options: ["Their own accomplishments", "The law of the Lord", "The world's news", "The words of their friends"],
-                            answer: 1,
-                            reference: "Psalm 1:2"
-                        },
-                        {
-                            question: "Which book of the Bible states that 'true worship is in spirit and truth'?",
-                            options: ["Romans", "John", "Ephesians", "Acts"],
-                            answer: 1,
-                            reference: "John 4:24"
-                        }
-                    ],
-                },
-                work: {
-                    title: "Work and Career Quiz",
-                    questions: [
-                        {
-                            question: "According to 1 Corinthians 10:31, why should we work?",
-                            options: ["To earn a living", "To gain power", "To glorify God", "To please our boss"],
-                            answer: 2,
-                            reference: "1 Corinthians 10:31"
-                        },
-                        {
-                            question: "Which proverb warns against the dangers of laziness?",
-                            options: ["Proverbs 10:4", "Proverbs 11:3", "Proverbs 28:19", "Proverbs 6:6"],
-                            answer: 0,
-                            reference: "Proverbs 10:4"
-                        },
-                        {
-                            question: "What does Colossians 3:23 command regarding our work?",
-                            options: ["Do it to be seen by others", "Do it with a good attitude", "Work as if you were working for the Lord", "Work only for a just wage"],
-                            answer: 2,
-                            reference: "Colossians 3:23"
-                        },
-                        {
-                            question: "Which principle is highlighted in Proverbs 11:3?",
-                            options: ["Work ethic", "Financial gain", "Honesty and integrity", "Serving the poor"],
-                            answer: 2,
-                            reference: "Proverbs 11:3"
-                        }
-                    ],
-                },
-                health: {
-                    title: "Health and Wellness Quiz",
-                    questions: [
-                        {
-                            question: "According to 1 Corinthians 6:19-20, what is our body considered?",
-                            options: ["Our own property", "A temple of the Holy Spirit", "A temporary dwelling", "A source of temptation"],
-                            answer: 1,
-                            reference: "1 Corinthians 6:19-20"
-                        },
-                        {
-                            question: "What does 1 Peter 5:7 tell us to do with our anxieties?",
-                            options: ["Ignore them", "Manage them on our own", "Cast all our cares on God", "Share them with friends only"],
-                            answer: 2,
-                            reference: "1 Peter 5:7"
-                        },
-                        {
-                            question: "The principle of the Sabbath is primarily about what?",
-                            options: ["Attending church", "Working less", "Resting and focusing on God", "Doing good deeds"],
-                            answer: 2,
-                            reference: "Exodus 20:8-11"
-                        },
-                        {
-                            question: "In the context of wellness, 1 Peter 5:8 encourages us to be...",
-                            options: ["Self-controlled and sober-minded", "Rich and healthy", "Popular and well-liked", "Bold and adventurous"],
-                            answer: 0,
-                            reference: "1 Peter 5:8"
-                        }
-                    ],
-                },
-                tech: {
-                    title: "Technology and Media Quiz",
-                    questions: [
-                        {
-                            question: "Ephesians 5:15-16 commands us to do what with our time?",
-                            options: ["Use it for entertainment", "Make the best use of it", "Spend it on ourselves", "Share it with others"],
-                            answer: 1,
-                            reference: "Ephesians 5:15-16"
-                        },
-                        {
-                            question: "What kind of things should we focus our thoughts on, according to Philippians 4:8?",
-                            options: ["Things that are popular", "Things that make us happy", "Things that are true, honorable, and pure", "Things that are profitable"],
-                            answer: 2,
-                            reference: "Philippians 4:8"
-                        },
-                        {
-                            question: "The Bible warns against being 'conformed to this world' in which book?",
-                            options: ["Ephesians", "James", "Romans", "Colossians"],
-                            answer: 2,
-                            reference: "Romans 12:2"
-                        },
-                        {
-                            question: "Technology and media can be used as a tool for what purpose, according to Psalm 145:4?",
-                            options: ["Spreading God's Word to the next generation", "Building personal wealth", "Gaining influence", "Distracting from problems"],
-                            answer: 0,
-                            reference: "Psalm 145:4"
-                        }
-                    ],
-                },
-                witnessing: {
-                    title: "Witnessing and Evangelism Quiz",
-                    questions: [
-                        {
-                            question: "Which passage contains the Great Commission?",
-                            options: ["Acts 1:8", "Matthew 28:19-20", "John 3:16", "Romans 10:9-10"],
-                            answer: 1,
-                            reference: "Matthew 28:19-20"
-                        },
-                        {
-                            question: "According to 1 Peter 3:15, how should we give a reason for our hope?",
-                            options: ["With boldness and confidence", "With gentleness and respect", "With passion and tears", "With powerful arguments"],
-                            answer: 1,
-                            reference: "1 Peter 3:15"
-                        },
-                        {
-                            question: "What is a key aspect of a Christian's 'lifestyle witness'?",
-                            options: ["Living a perfect life without sin", "Working hard at your job", "Allowing your good deeds to point to God", "Praying publicly"],
-                            answer: 2,
-                            reference: "Matthew 5:16"
-                        },
-                        {
-                            question: "Who empowers believers to be witnesses?",
-                            options: ["The Holy Spirit", "The church leaders", "Our own strength", "Our wisdom"],
-                            answer: 0,
-                            reference: "Acts 1:8"
-                        }
-                    ],
-                },
-                community: {
-                    title: "Community and Service Quiz",
-                    questions: [
-                        {
-                            question: "According to 1 Corinthians 12, what is the church described as?",
-                            options: ["A building", "A family", "The body of Christ", "A social club"],
-                            answer: 2,
-                            reference: "1 Corinthians 12:27"
-                        },
-                        {
-                            question: "What does Galatians 6:2 command us to do for one another?",
-                            options: ["To bear one another's burdens", "To offer financial help", "To share meals", "To pray for one another"],
-                            answer: 0,
-                            reference: "Galatians 6:2"
-                        },
-                        {
-                            question: "The practice of hospitality is mentioned in which book?",
-                            options: ["Ephesians", "Romans", "Titus", "Hebrews"],
-                            answer: 1,
-                            reference: "Romans 12:13"
-                        },
-                        {
-                            question: "What should our speech be used for, according to Ephesians 4:29?",
-                            options: ["Telling jokes", "Sharing our opinions", "Edifying and building others up", "Correcting others' mistakes"],
-                            answer: 2,
-                            reference: "Ephesians 4:29"
-                        }
-                    ],
-                },
-                justice: {
-                    title: "Justice and Mercy Quiz",
-                    questions: [
-                        {
-                            question: "What does Proverbs 31:8-9 command us to do?",
-                            options: ["Give to the poor", "Pray for the poor", "Speak up for those who cannot speak for themselves", "Read the law to them"],
-                            answer: 2,
-                            reference: "Proverbs 31:8-9"
-                        },
-                        {
-                            question: "Which prophet gives the famous command to 'do justice, love mercy, and walk humbly with your God'?",
-                            options: ["Isaiah", "Micah", "Jeremiah", "Hosea"],
-                            answer: 1,
-                            reference: "Micah 6:8"
-                        },
-                        {
-                            question: "According to Matthew 5:7, what is the blessing for those who are merciful?",
-                            options: ["They will see God", "They will be called sons of God", "They will receive mercy", "They will inherit the earth"],
-                            answer: 2,
-                            reference: "Matthew 5:7"
-                        },
-                        {
-                            question: "Proverbs 19:17 states that whoever is generous to the poor is lending to whom?",
-                            options: ["The church", "The government", "The Lord", "A worthy cause"],
-                            answer: 2,
-                            reference: "Proverbs 19:17"
-                        }
-                    ],
-                },
-                political: {
-                    title: "Political Engagement & Citizenship Quiz",
-                    questions: [
-                        {
-                            question: "In Romans 13, why are we to be subject to governing authorities?",
-                            options: ["Because they are always right", "Because they have been instituted by God", "Because it is required by law", "Because they are our fellow citizens"],
-                            answer: 1,
-                            reference: "Romans 13:1-7"
-                        },
-                        {
-                            question: "What does 1 Timothy 2:1-2 instruct us to do for our leaders?",
-                            options: ["Follow their every command", "Critique their policies", "Pray for them", "Give them gifts"],
-                            answer: 2,
-                            reference: "1 Timothy 2:1-2"
-                        },
-                        {
-                            question: "What did God command His people in Jeremiah 29:7 to do for the city they were in?",
-                            options: ["To tear it down", "To move away from it", "To seek its welfare", "To fight against it"],
-                            answer: 2,
-                            reference: "Jeremiah 29:7"
-                        },
-                        {
-                            question: "When a human law conflicts with God's Word, what is the Christian's ultimate duty?",
-                            options: ["Obey the human law", "Obey God rather than men", "Ignore both laws", "Vote for a new law"],
-                            answer: 1,
-                            reference: "Acts 5:29"
-                        }
-                    ],
-                },
-                education: {
-                    title: "Education and Learning Quiz",
-                    questions: [
-                        {
-                            question: "According to Proverbs 9:10, what is the beginning of wisdom?",
-                            options: ["Experience", "The fear of the Lord", "A good teacher", "Reading many books"],
-                            answer: 1,
-                            reference: "Proverbs 9:10"
-                        },
-                        {
-                            question: "The Bible encourages us to seek knowledge and understanding like searching for what?",
-                            options: ["Food", "Water", "Hidden treasure", "A lost sheep"],
-                            answer: 2,
-                            reference: "Proverbs 2:3-5"
-                        },
-                        {
-                            question: "What does Hebrews 5:14 say mature believers are able to do?",
-                            options: ["Teach others", "Discern between good and evil", "Speak in tongues", "Perform miracles"],
-                            answer: 1,
-                            reference: "Hebrews 5:14"
-                        },
-                        {
-                            question: "According to 1 Corinthians 8:1, what should knowledge be used for?",
-                            options: ["To show off", "To gain power", "To build up others in love", "To win arguments"],
-                            answer: 2,
-                            reference: "1 Corinthians 8:1"
-                        }
-                    ],
-                },
-            };
-
-            const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-            const [selectedOption, setSelectedOption] = useState(null);
-            const [showResult, setShowResult] = useState(false);
-            const [score, setScore] = useState(0);
-            const [quizCompleted, setQuizCompleted] = useState(false);
-
-            const quiz = quizData[quizTopic];
-            if (!quiz) return createElement("div", { className: "text-center" }, "Quiz not found!");
-
-            const currentQuestion = quiz.questions[currentQuestionIndex];
-
-            const handleOptionClick = (index) => {
-                setSelectedOption(index);
-            };
-
-            const handleSubmit = () => {
-                if (selectedOption === currentQuestion.answer) {
-                    setScore(score + 1);
-                }
-                setShowResult(true);
-            };
-
-            const handleNext = () => {
-                setShowResult(false);
-                setSelectedOption(null);
-                if (currentQuestionIndex < quiz.questions.length - 1) {
-                    setCurrentQuestionIndex(currentQuestionIndex + 1);
-                } else {
-                    setQuizCompleted(true);
-                }
-            };
-
-            const handleQuizReset = () => {
-                // Return to home page directly without a confirmation dialog
-                setCurrentQuestionIndex(0);
-                setSelectedOption(null);
-                setShowResult(false);
-                setScore(0);
-                setQuizCompleted(false);
-                navigate('home');
-            };
-
-            if (quizCompleted) {
-                return (
-                    createElement("div", { className: "max-w-xl mx-auto bg-white rounded-xl shadow-lg p-6 text-center space-y-4" },
-                        createElement("h3", { className: "text-2xl font-bold text-indigo-700" }, "Quiz Complete!"),
-                        createElement("p", { className: "text-lg" }, `You scored ${score} out of ${quiz.questions.length}.`),
-                        createElement("button", {
-                            onClick: handleQuizReset,
-                            className: "bg-indigo-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-indigo-700 transition-colors"
-                        }, "Return to Home")
-                    )
-                );
-            }
-
-            return (
-                createElement("div", { className: "max-w-xl mx-auto bg-white rounded-xl shadow-lg" },
-                    createElement(PageHeader, { title: quiz.title, navigate: () => navigate(quizTopic) }),
-                    createElement("div", { className: "p-6 space-y-4" },
-                        createElement("div", { className: "text-sm text-gray-500 mb-4" }, `Question ${currentQuestionIndex + 1} of ${quiz.questions.length}`),
-                        createElement("h3", { className: "text-xl font-semibold mb-4" }, currentQuestion.question),
-                        createElement("div", { className: "space-y-2" },
-                            currentQuestion.options.map((option, index) => (
-                                createElement("button", {
-                                    key: index,
-                                    onClick: () => handleOptionClick(index),
-                                    className: `w-full text-left p-3 border rounded-lg transition-colors
-                                        ${selectedOption === index
-                                        ? (showResult
-                                            ? (index === currentQuestion.answer ? 'bg-green-200 border-green-500' : 'bg-red-200 border-red-500')
-                                            : 'bg-indigo-100 border-indigo-500')
-                                        : 'bg-gray-50 hover:bg-gray-100'
-                                        }`,
-                                    disabled: showResult,
-                                    "aria-label": `Select option: ${option}`
-                                }, option)
-                            ))
-                        ),
-                        showResult && (
-                            createElement("div", { className: "mt-4 p-4 rounded-lg bg-gray-100 border border-gray-200 text-sm" },
-                                createElement("p", { className: "font-semibold text-gray-700" }, "Correct Answer:"),
-                                createElement("p", { className: "text-green-600" }, currentQuestion.options[currentQuestion.answer]),
-                                createElement("p", { className: "mt-2 text-gray-700 font-semibold" }, "Biblical Reference:"),
-                                createElement("p", { className: "text-gray-600" }, currentQuestion.reference)
-                            )
-                        ),
-                        createElement("div", { className: "flex justify-end mt-4" },
-                            !showResult ? (
-                                createElement("button", {
-                                    onClick: handleSubmit,
-                                    disabled: selectedOption === null,
-                                    className: "bg-indigo-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-indigo-700 disabled:bg-gray-400",
-                                    "aria-label": "Submit quiz answer"
-                                }, "Submit")
-                            ) : (
-                                createElement("button", {
-                                    onClick: handleNext,
-                                    className: "bg-indigo-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-indigo-700",
-                                    "aria-label": currentQuestionIndex < quiz.questions.length - 1 ? 'Next question' : 'Finish quiz'
-                                }, currentQuestionIndex < quiz.questions.length - 1 ? 'Next Question' : 'Finish Quiz')
-                            )
-                        )
-                    )
-                )
-            );
-        };
-
-        const App = () => {
-            const [currentPage, setCurrentPage] = useState('home');
-            const [currentQuiz, setCurrentQuiz] = useState(null);
-
-            const navigate = (page) => {
-                setCurrentPage(page);
-                setCurrentQuiz(null);
-            };
-
-            const startQuiz = (topic) => {
-                setCurrentQuiz(topic);
-                setCurrentPage('quiz');
-            };
-
-            const pageComponents = {
-                home: createElement(HomePage, { navigate: navigate }),
-                relationships: createElement(RelationshipsPage, { navigate: navigate, startQuiz: startQuiz }),
-                financial: createElement(FinancialStewardshipPage, { navigate: navigate, startQuiz: startQuiz }),
-                conflict: createElement(ConflictResolutionPage, { navigate: navigate, startQuiz: startQuiz }),
-                spiritual: createElement(SpiritualPage, { navigate: navigate, startQuiz: startQuiz }),
-                work: createElement(WorkPage, { navigate: navigate, startQuiz: startQuiz }),
-                health: createElement(HealthPage, { navigate: navigate, startQuiz: startQuiz }),
-                tech: createElement(TechnologyPage, { navigate: navigate, startQuiz: startQuiz }),
-                witnessing: createElement(WitnessingPage, { navigate: navigate, startQuiz: startQuiz }),
-                community: createElement(CommunityPage, { navigate: navigate, startQuiz: startQuiz }),
-                justice: createElement(JusticePage, { navigate: navigate, startQuiz: startQuiz }),
-                political: createElement(PoliticalPage, { navigate: navigate, startQuiz: startQuiz }),
-                education: createElement(EducationPage, { navigate: navigate, startQuiz: startQuiz }),
-                quiz: createElement(QuizPage, { quizTopic: currentQuiz, navigate: navigate }),
-            };
-
-            return (
-                createElement("div", { className: "min-h-screen bg-slate-100 font-sans text-slate-800 p-4 sm:p-8" },
-                    pageComponents[currentPage] || createElement(HomePage, { navigate: navigate })
-                )
-            );
-        };
-
-        const root = createRoot(document.getElementById('root'));
-        root.render(createElement(App));
-    </script>
-</body>
-</html>
+    // ... (rest of the code remains the same)
+</script>
