@@ -187,34 +187,211 @@
                         createElement("p", { className: "text-lg text-slate-600" }, "A guide to applying biblical principles to life's challenges."),
                         createElement("div", { className: "mt-4 pt-4 border-t border-gray-200 text-sm text-slate-600" },
                             createElement("p", { className: "mb-1" }, welcomeMessage),
-                            createElement("a", { href: website, className: "inline-block mt-2 px-6 py-2 bg-indigo-600 text-white font-semibold rounded-full hover:bg-indigo-700 transition-colors shadow-md", target: "_blank", rel: "noopener noreferrer" }, "Visit My Website")
-                        )
+                            
                     ),
-                    createElement("div", { className: "p-6 bg-white rounded-xl shadow-lg border border-gray-200" },
-                        createElement("h2", { className: "text-2xl font-bold mb-4 text-indigo-600" }, "Explore Key Areas"),
-                        createElement("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-4" },
-                            topics.map((topic) => (
-                                createElement("button", {
-                                    key: topic.page,
-                                    onClick: () => navigate(topic.page),
-                                    className: "group p-6 bg-white border border-gray-200 rounded-xl flex flex-col items-center text-center hover:bg-indigo-50 transition-colors shadow-sm hover:shadow-md",
-                                    "aria-label": `Navigate to ${topic.title}`
-                                },
-                                    createElement("div", { className: "w-12 h-12 mb-3 p-2 bg-indigo-100 text-indigo-600 rounded-full group-hover:bg-indigo-200 transition-colors" },
-                                        topic.icon
-                                    ),
-                                    createElement("span", { className: "font-semibold text-lg" }, topic.title)
-                                )
-                            ))
-                        )
-                    ),
-                    createElement("div", { className: "p-6 bg-indigo-700 rounded-xl shadow-lg text-white text-center" },
-                        createElement("blockquote", { className: "italic mb-2" }, `"${biblicalQuote.verse}"`),
-                        createElement("p", { className: "font-medium" }, `\u2015 ${biblicalQuote.reference}`)
-                    )
-                )
-            );
+               <script>
+    const { useState, createElement } = React;
+    const { createRoot } = ReactDOM;
+
+    // --- Icon Components (Transpiled from JSX) ---
+    const BookOpenIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-book-open" }),
+            createElement("path", { d: "M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" }),
+            createElement("path", { d: "M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" })
+        )
+    );
+    const BanknoteIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-banknote" }),
+            createElement("rect", { width: "20", height: "12", x: "2", y: "6", rx: "2" }),
+            createElement("circle", { cx: "12", cy: "12", r: "2" }),
+            createElement("path", { d: "M6 12h.01M18 12h.01" })
+        )
+    );
+    const HeartHandshakeIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-heart-handshake" }),
+            createElement("path", { d: "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" }),
+            createElement("path", { d: "M12 14h.01" }),
+            createElement("path", { d: "m18 14-4 4" })
+        )
+    );
+    const ScaleIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucude-scale" }),
+            createElement("path", { d: "m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" }),
+            createElement("path", { d: "m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" }),
+            createElement("path", { d: "M7 21h10" }),
+            createElement("path", { d: "M12 3v18" }),
+            createElement("path", { d: "M3 7h2c2 0 5-1 7-2s5 1 7 2h2" })
+        )
+    );
+    const ChevronLeftIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-chevron-left" }),
+            createElement("path", { d: "m15 18-6-6 6-6" })
+        )
+    );
+    const BriefcaseIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-briefcase" }),
+            createElement("rect", { width: "20", height: "14", x: "2", y: "7", rx: "2", ry: "2" }),
+            createElement("path", { d: "M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" })
+        )
+    );
+    const ChurchIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-church" }),
+            createElement("path", { d: "M18 7c0-2.76-2.07-5-4.63-5C10.74 2 8 4.24 8 7c0 .8.2 1.55.59 2.22L2 15v6h20v-6l-6.59-5.78A6.98 6.98 0 0 0 18 7Z" }),
+            createElement("path", { d: "M12 2v20" }),
+            createElement("path", { d: "M12 10v10" }),
+            createElement("path", { d: "M17 10v10" }),
+            createElement("path", { d: "M7 10v10" }),
+            createElement("path", { d: "M5 15h14" })
+        )
+    );
+    const HeartPulseIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-heart-pulse" }),
+            createElement("path", { d: "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" }),
+            createElement("path", { d: "M3.2 21.72l4.8-1.6" }),
+            createElement("path", { d: "M21 21.72l-4.8-1.6" }),
+            createElement("path", { d: "M9.54 12.18h.01" }),
+            createElement("path", { d: "M14.46 12.18h.01" }),
+            createElement("path", { d: "M12 21v-3" }),
+            createElement("path", { d: "M12 12v12" })
+        )
+    );
+    const UsersIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-users" }),
+            createElement("path", { d: "M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" }),
+            createElement("circle", { cx: "12", cy: "7", r: "4" }),
+            createElement("path", { d: "M22 21v-2a4 4 0 0 0-3-3.87" }),
+            createElement("path", { d: "M6 15V14a4 4 0 0 1 4-4h2" })
+        )
+    );
+    const SmartphoneIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-smartphone" }),
+            createElement("rect", { width: "14", height: "20", x: "5", y: "2", rx: "2", ry: "2" }),
+            createElement("path", { d: "M12 18h.01" })
+        )
+    );
+    const MegaphoneIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-megaphone" }),
+            createElement("path", { d: "m3 11 1.93-2.61a2 2 0 0 1 3.09-1.74l8.28 4.74a2 2 0 0 1 0 3.48L8.02 20.35a2 2 0 0 1-3.09-1.74L3 13" }),
+            createElement("path", { d: "M16.5 13h2a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2" }),
+            createElement("path", { d: "M12 13h.01" })
+        )
+    );
+    const LandmarkIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-landmark" }),
+            createElement("line", { x1: "2", x2: "22", y1: "22", y2: "22" }),
+            createElement("line", { x1: "6", x2: "6", y1: "18", y2: "22" }),
+            createElement("line", { x1: "10", x2: "10", y1: "18", y2: "22" }),
+            createElement("line", { x1: "14", x2: "14", y1: "18", y2: "22" }),
+            createElement("line", { x1: "18", x2: "18", y1: "18", y2: "22" }),
+            createElement("path", { d: "M3.24 12.8L12 2l8.76 10.8-2.14 1.25V22H5.38V14.05L3.24 12.8Z" })
+        )
+    );
+    const GavelIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-gavel" }),
+            createElement("path", { d: "m15 12-8-8a2.15 2.15 0 0 0-1 1.5V16H2V20h5a2 2 0 0 1 2 2h4a2 2 0 0 1 2-2h5v-4H15v-4z" }),
+            createElement("path", { d: "m18 12 4-4a2.15 2.15 0 0 0-1-1.5V12h-3z" }),
+            createElement("path", { d: "M11 20v-4" }),
+            createElement("path", { d: "M11 22v-2" })
+        )
+    );
+    const GraduationCapIcon = (props) => (
+        createElement("svg", Object.assign({}, props, { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "lucide lucide-graduation-cap" }),
+            createElement("path", { d: "M21.42 10.9a2.09 2.09 0 0 0-1.74-1.12c-.93 0-1.75.52-2.17 1.3a2.09 2.09 0 0 0-1.74-1.12c-.93 0-1.75.52-2.17 1.3a2.09 2.09 0 0 0-1.74-1.12c-.93 0-1.75.52-2.17 1.3a2.09 2.09 0 0 0-1.74-1.12c-.93 0-1.75.52-2.17 1.3" }),
+            createElement("path", { d: "M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" }),
+            createElement("path", { d: "M12 2v3" }),
+            createElement("path", { d: "M12 17v-3" }),
+            createElement("path", { d: "M12 14v-2" })
+        )
+    );
+
+
+    // --- Page Header Component ---
+    const PageHeader = ({ title, navigate }) => (
+        createElement("div", { className: "flex items-center justify-between p-4 bg-white rounded-t-xl border-b border-gray-200" },
+            createElement("button", {
+                onClick: () => navigate('home'),
+                className: "flex items-center text-indigo-600 hover:text-indigo-800 transition-colors",
+                "aria-label": "Navigate to home"
+            },
+                createElement(ChevronLeftIcon, { className: "w-5 h-5" }),
+                createElement("span", { className: "ml-1 font-medium" }, "Home")
+            ),
+            createElement("h1", { className: "text-xl font-bold text-center flex-grow" }, title),
+            createElement("div", { className: "w-12" })
+        )
+    );
+
+    // --- Home Page Component ---
+    const HomePage = ({ navigate }) => {
+        const topics = [
+            { title: 'Relationships & Family', page: 'relationships', icon: createElement(HeartHandshakeIcon, null) },
+            { title: 'Financial Stewardship', page: 'financial', icon: createElement(BanknoteIcon, null) },
+            { title: 'Conflict Resolution', page: 'conflict', icon: createElement(ScaleIcon, null) },
+            { title: 'Spiritual Disciplines', page: 'spiritual', icon: createElement(ChurchIcon, null) },
+            { title: 'Work and Career', page: 'work', icon: createElement(BriefcaseIcon, null) },
+            { title: 'Health and Wellness', page: 'health', icon: createElement(HeartPulseIcon, null) },
+            { title: 'Technology and Media', page: 'tech', icon: createElement(SmartphoneIcon, null) },
+            { title: 'Witnessing and Evangelism', page: 'witnessing', icon: createElement(MegaphoneIcon, null) },
+            { title: 'Community and Service', page: 'community', icon: createElement(UsersIcon, null) },
+            { title: 'Justice and Mercy', page: 'justice', icon: createElement(GavelIcon, null) },
+            { title: 'Political Engagement & Citizenship', page: 'political', icon: createElement(LandmarkIcon, null) },
+            { title: 'Education and Learning', page: 'education', icon: createElement(GraduationCapIcon, null) },
+        ];
+
+        const biblicalQuote = {
+            verse: 'All Scripture is God-breathed and is useful for teaching, rebuking, correcting and training in righteousness...',
+            reference: '2 Timothy 3:16',
         };
+
+        const welcomeMessage = "Welcome brothers and sisters in Christ, this app is to help us all be more grounded in God's word which is authority and direction for life. Have a wonderful day/night from Jason.";
+        const website = "https://churchconcern.great-site.net/";
+
+        return (
+            createElement("div", { className: "max-w-4xl mx-auto space-y-8" },
+                createElement("div", { className: "text-center p-8 bg-white rounded-xl shadow-lg border border-gray-200" },
+                    createElement("div", { className: "flex flex-col items-center mb-4 text-indigo-600" },
+                        createElement(BookOpenIcon, { className: "w-20 h-20" })
+                    ),
+                    createElement("h1", { className: "text-3xl font-bold mb-2 text-indigo-700" }, "Sola Scriptura Decision-Making"),
+                    createElement("p", { className: "text-lg text-slate-600" }, "A guide to applying biblical principles to life's challenges."),
+                    createElement("div", { className: "mt-4 pt-4 border-t border-gray-200 text-sm text-slate-600" },
+                        createElement("p", { className: "mb-1" }, welcomeMessage)
+                        // The button has been removed from here
+                    )
+                ),
+                createElement("div", { className: "p-6 bg-white rounded-xl shadow-lg border border-gray-200" },
+                    createElement("h2", { className: "text-2xl font-bold mb-4 text-indigo-600" }, "Explore Key Areas"),
+                    createElement("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-4" },
+                        topics.map((topic) => (
+                            createElement("button", {
+                                key: topic.page,
+                                onClick: () => navigate(topic.page),
+                                className: "group p-6 bg-white border border-gray-200 rounded-xl flex flex-col items-center text-center hover:bg-indigo-50 transition-colors shadow-sm hover:shadow-md",
+                                "aria-label": `Maps to ${topic.title}`
+                            },
+                                createElement("div", { className: "w-12 h-12 mb-3 p-2 bg-indigo-100 text-indigo-600 rounded-full group-hover:bg-indigo-200 transition-colors" },
+                                    topic.icon
+                                ),
+                                createElement("span", { className: "font-semibold text-lg" }, topic.title)
+                            )
+                        ))
+                    )
+                ),
+                // --- Start of new button section ---
+                createElement("div", { className: "text-center" },
+                    createElement("a", { href: website, className: "inline-block mt-2 px-6 py-2 bg-indigo-600 text-white font-semibold rounded-full hover:bg-indigo-700 transition-colors shadow-md", target: "_blank", rel: "noopener noreferrer" }, "Visit My Website")
+                ),
+                // --- End of new button section ---
+                createElement("div", { className: "p-6 bg-indigo-700 rounded-xl shadow-lg text-white text-center" },
+                    createElement("blockquote", { className: "italic mb-2" }, `"${biblicalQuote.verse}"`),
+                    createElement("p", { className: "font-medium" }, `\u2015 ${biblicalQuote.reference}`)
+                )
+            )
+        );
+    };
+
+    // ... (rest of the code remains the same)
+</script>
 
         // --- Relationships & Family Page Component ---
         const RelationshipsPage = ({ navigate, startQuiz }) => {
